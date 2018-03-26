@@ -1,7 +1,8 @@
 # DT2119, Lab 1 Feature Extraction
 
 # Function given by the exercise ----------------------------------
-
+import numpy as np
+import matplotlib.pyplot as plt
 def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, nceps=13, samplingrate=20000, liftercoeff=22):
     """Computes Mel Frequency Cepstrum Coefficients.
 
@@ -24,7 +25,8 @@ def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, ncep
     spec = powerSpectrum(windowed, nfft)
     mspec = logMelSpectrum(spec, samplingrate)
     ceps = cepstrum(mspec, nceps)
-    return lifter(ceps, liftercoeff)
+    #return None #lifter(ceps, liftercoeff)
+    return frames
 
 # Functions to be implemented ----------------------------------
 
@@ -39,6 +41,24 @@ def enframe(samples, winlen, winshift):
         numpy array [N x winlen], where N is the number of windows that fit
         in the input signal
     """
+
+    start = 0
+    frames = []
+    while True:
+        end = start + winlen
+        if end > len(samples):
+            break;
+            #end=-1
+
+        frame = samples[start:end]
+        frames.append(frame)
+        start += winshift
+
+    npframes = np.vstack(frames)
+    plt.pcolormesh(npframes.T)
+    plt.show()
+    return npframes
+
     
 def preemp(input, p=0.97):
     """
