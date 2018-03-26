@@ -3,6 +3,7 @@
 # Function given by the exercise ----------------------------------
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.signal import lfilter
 def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, nceps=13, samplingrate=20000, liftercoeff=22):
     """Computes Mel Frequency Cepstrum Coefficients.
 
@@ -26,7 +27,7 @@ def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, ncep
     mspec = logMelSpectrum(spec, samplingrate)
     ceps = cepstrum(mspec, nceps)
     #return None #lifter(ceps, liftercoeff)
-    return frames
+    return preemph
 
 # Functions to be implemented ----------------------------------
 
@@ -73,6 +74,9 @@ def preemp(input, p=0.97):
         output: array of pre-emphasised speech samples
     Note (you can use the function lfilter from scipy.signal)
     """
+    emphasized = lfilter([1, -p], 1, input)
+    return emphasized
+
 
 def windowing(input):
     """
