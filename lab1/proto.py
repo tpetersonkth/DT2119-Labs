@@ -3,7 +3,8 @@
 # Function given by the exercise ----------------------------------
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.signal import lfilter
+from scipy.signal import lfilter, hamming
+import scipy
 def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, nceps=13, samplingrate=20000, liftercoeff=22):
     """Computes Mel Frequency Cepstrum Coefficients.
 
@@ -27,7 +28,7 @@ def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, ncep
     mspec = logMelSpectrum(spec, samplingrate)
     ceps = cepstrum(mspec, nceps)
     #return None #lifter(ceps, liftercoeff)
-    return preemph
+    return windowed
 
 # Functions to be implemented ----------------------------------
 
@@ -56,8 +57,8 @@ def enframe(samples, winlen, winshift):
         start += winshift
 
     npframes = np.vstack(frames)
-    plt.pcolormesh(npframes.T)
-    plt.show()
+    #plt.pcolormesh(npframes.T)
+    #plt.show()
     return npframes
 
     
@@ -90,6 +91,15 @@ def windowing(input):
     Note (you can use the function hamming from scipy.signal, include the sym=0 option
     if you want to get the same results as in the example)
     """
+    window = hamming(input.shape[1], sym=0)
+    new_frames = []
+    for frame in input:
+        windowed = np.convolve(frame, window)
+        new_frames.append(windowed)
+
+
+    npwindows = np.vstack(new_frames)
+    return npwindows
 
 def powerSpectrum(input, nfft):
     """
