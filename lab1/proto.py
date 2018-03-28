@@ -155,13 +155,17 @@ def cepstrum(input, nceps):
     #out = lifter(out)
     return out
 
+def calcDist(x,y):
+    dist = np.linalg.norm(x - y)
+    return dist
+
 def dtw(x, y, dist):
     """Dynamic Time Warping.
 
     Args:
         x, y: arrays of size NxD and MxD respectively, where D is the dimensionality
               and N, M are the respective lenghts of the sequences
-        dist: distance function (can be used in the code as dist(x[i], y[j]))
+        dist: distance function (can be used in the  code as dist(x[i], y[j]))
 
     Outputs:
         d: global distance between the sequences (scalar) normalized to len(x)+len(y)
@@ -171,3 +175,12 @@ def dtw(x, y, dist):
 
     Note that you only need to define the first output for this exercise.
     """
+    N = x.shape[0]
+    M = y.shape[0]
+    accD = [[0 for x in range(N)] for y in range(M)]
+    for i in range(N):
+        for j in range(M):
+            accD[i][j] = dist[x[i], y[j]] + min(accD[i-1][j], accD[i-1][j-1], accD[i][j-1])
+    return accD[N-1][M-1]
+
+
