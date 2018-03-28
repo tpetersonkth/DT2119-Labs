@@ -5,7 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import lfilter, hamming
 from lab1.tools import *
-from scipy.fftpack import dct, fft
+from scipy.fftpack import fft
+from scipy.fftpack.realtransforms import dct
 import scipy
 def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, nceps=13, samplingrate=20000, liftercoeff=22):
     """Computes Mel Frequency Cepstrum Coefficients.
@@ -30,8 +31,9 @@ def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, ncep
 
     mspec = logMelSpectrum(spec, samplingrate)
     ceps = cepstrum(mspec, nceps)
-    #return None #lifter(ceps, liftercoeff)
-    return mspec
+    return ceps
+    return lifter(ceps, liftercoeff)
+
 
 # Functions to be implemented ----------------------------------
 
@@ -149,7 +151,7 @@ def cepstrum(input, nceps):
     Note: you can use the function dct from scipy.fftpack.realtransforms
     """
 
-    out = dct(input)
+    out = dct(input, n=nceps, norm='ortho')
     return out
 
 def dtw(x, y, dist):
