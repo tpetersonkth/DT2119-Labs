@@ -179,18 +179,20 @@ def dtw(x, y, dist):
     N = x.shape[0] #Columns
     M = y.shape[0] #Rows
     accD = [[0 for x in range(M+1)] for y in range(N+1)]
+    accD = np.zeros((N+1,M+1))
     for i in range(1, N+1):
         accD[i][0] = 9999999999
     for i in range(1, M+1):
         accD[0][i] = 9999999999
     accD[0][0] = 0
 
-
-
+    z = x[:,None]-y
+    z1 = np.square(z)
+    z2 = np.sum(z1,-1)
+    distz = np.sqrt(z2)
     for i in range(1,N+1):
         for j in range(1,M+1):
-            accD[i][j] = dist(x[i-1], y[j-1]) + min(accD[i-1][j], accD[i-1][j-1], accD[i][j-1])
-
+            accD[i][j] = distz[i-1,j-1] + min(accD[i-1][j], accD[i-1][j-1], accD[i][j-1])
     return accD[N][M]/(N+M)
 
 def compareUtterances(data):
@@ -201,16 +203,19 @@ def compareUtterances(data):
     for i in range(0, 44):
         mfccMatrix[i] = mfcc(data[i]['samples'])
 
+    DD = np.zeros((44,44))
     for i in range(0,44):
-        p = (i/44)*100
-        print("%f%"%P)
-
-        for j in range(0, 44):
+        print(i)
+        for j in range(i, 44):
             D1 = mfccMatrix[i]
             D2 = mfccMatrix[j]
-            D[i][j] = dtw(D1,D2,calcDist)
+            out = dtw(D1, D2, calcDist)
 
-    np.save('insurance d.txt', D)
+            DD[i,j] = out
+
+    ii = np.load('insurance d.txt.npy')
+    D = DD + DD.T
+    #np.save('insurance d.txt', D)
     plt.pcolormesh(D)
     #plt.savefig()
     plt.show()
