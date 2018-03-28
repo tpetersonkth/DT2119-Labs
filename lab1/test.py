@@ -1,6 +1,9 @@
 import numpy as np
 from lab1 import proto
 import matplotlib.pyplot as plt
+from lab1.tools import *
+from scipy.cluster.hierarchy import linkage, dendrogram
+import scipy
 data = np.load('lab1_data.npz')['data']
 example_data = np.load('lab1_example.npz')['example'].item()
 ''' 
@@ -20,7 +23,13 @@ plt.show()
 
 diff = example_data[target] - output
 '''
-proto.compareUtterances(data)
+D = proto.compareUtterances(data)
+
+Z = linkage(D, method='complete')
+labels = tidigit2labels(data)
+dendrogram(Z, labels=labels)
+print('done')
+
 #distances = proto.calcDist()
 #output =
 #plt.pcolormesh(output.T)

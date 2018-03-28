@@ -185,6 +185,8 @@ def dtw(x, y, dist):
         accD[0][i] = 9999999999
     accD[0][0] = 0
 
+
+
     for i in range(1,N+1):
         for j in range(1,M+1):
             accD[i][j] = dist(x[i-1], y[j-1]) + min(accD[i-1][j], accD[i-1][j-1], accD[i][j-1])
