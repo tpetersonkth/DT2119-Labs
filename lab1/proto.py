@@ -4,6 +4,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import lfilter, hamming
+from lab1.tools import *
+from scipy.fftpack import dct, fft
 import scipy
 def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, nceps=13, samplingrate=20000, liftercoeff=22):
     """Computes Mel Frequency Cepstrum Coefficients.
@@ -122,6 +124,14 @@ def logMelSpectrum(input, samplingrate):
     Note: use the trfbank function provided in tools.py to calculate the filterbank shapes and
           nmelfilters
     """
+    logMel = []
+    for frame in input:
+        out = np.log(logMelSpectrum(samplingrate, frame))
+        logMel.append(logMel)
+
+    ret = np.vstack(logMel)
+    return ret
+
 
 def cepstrum(input, nceps):
     """
