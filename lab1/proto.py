@@ -203,7 +203,7 @@ def compareUtterances(data):
 
     for i in range(0,44):
         p = (i/44)*100
-        print("%f%"%P)
+        print("%.2f%%"%p)
 
         for j in range(0, 44):
             D1 = mfccMatrix[i]
