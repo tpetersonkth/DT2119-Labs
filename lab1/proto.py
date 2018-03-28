@@ -27,10 +27,11 @@ def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, ncep
     preemph = preemp(frames, preempcoeff)
     windowed = windowing(preemph)
     spec = powerSpectrum(windowed, nfft)
+    return spec
     mspec = logMelSpectrum(spec, samplingrate)
     ceps = cepstrum(mspec, nceps)
     #return None #lifter(ceps, liftercoeff)
-    return windowed
+    return spec
 
 # Functions to be implemented ----------------------------------
 
@@ -109,6 +110,10 @@ def powerSpectrum(input, nfft):
         array of power spectra [N x nfft]
     Note: you can use the function fft from scipy.fftpack
     """
+    freqDom = fft(input,nfft)
+    absVal = np.absolute(freqDom)
+    retVal = np.square(absVal)
+    return retVal
 
 def logMelSpectrum(input, samplingrate):
     """
@@ -124,6 +129,7 @@ def logMelSpectrum(input, samplingrate):
     Note: use the trfbank function provided in tools.py to calculate the filterbank shapes and
           nmelfilters
     """
+
     logMel = []
     for frame in input:
         out = np.log(logMelSpectrum(samplingrate, frame))
