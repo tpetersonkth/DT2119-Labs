@@ -27,11 +27,11 @@ def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, ncep
     preemph = preemp(frames, preempcoeff)
     windowed = windowing(preemph)
     spec = powerSpectrum(windowed, nfft)
-    return spec
+
     mspec = logMelSpectrum(spec, samplingrate)
     ceps = cepstrum(mspec, nceps)
     #return None #lifter(ceps, liftercoeff)
-    return spec
+    return mspec
 
 # Functions to be implemented ----------------------------------
 
@@ -130,12 +130,9 @@ def logMelSpectrum(input, samplingrate):
           nmelfilters
     """
 
-    logMel = []
-    for frame in input:
-        out = np.log(logMelSpectrum(samplingrate, frame))
-        logMel.append(logMel)
-
-    ret = np.vstack(logMel)
+    bank = trfbank(samplingrate, input.shape[1])
+    ret = input.dot(bank.T)
+    ret = np.log(ret)
     return ret
 
 
@@ -152,7 +149,8 @@ def cepstrum(input, nceps):
     Note: you can use the function dct from scipy.fftpack.realtransforms
     """
 
-    dct(input)
+    out = dct(input)
+    return out
 
 def dtw(x, y, dist):
     """Dynamic Time Warping.
