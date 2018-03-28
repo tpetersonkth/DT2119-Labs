@@ -188,23 +188,24 @@ def dtw(x, y, dist):
         for j in range(1,M+1):
             accD[i][j] = dist(x[i-1], y[j-1]) + min(accD[i-1][j], accD[i-1][j-1], accD[i][j-1])
 
-    retVal = accD[N][M]/(len(x)+len(y))
-    lenx = len(x)
-
     return accD[N][M]/(N+M)
 
 def compareUtterances(data):
-    #Warning: slow implementation
     D = [[0 for x in range(44)] for y in range(44)]
+
+    mfccMatrix = [0 for x in range(44)]
+
+    for i in range(0, 44):
+        mfccMatrix[i] = mfcc(data[i]['samples'])
 
     for i in range(0,44):
         print(i)
         for j in range(0, 44):
-            D1 = mfcc(data[i]['samples'])
-            D2 = mfcc(data[j]['samples'])
+            D1 = mfccMatrix[i]
+            D2 = mfccMatrix[j]
             D[i][j] = dtw(D1,D2,calcDist)
 
     plt.pcolormesh(D)
-    plt.savefig()
+    #plt.savefig()
     plt.show()
 
