@@ -175,12 +175,36 @@ def dtw(x, y, dist):
 
     Note that you only need to define the first output for this exercise.
     """
-    N = x.shape[0]
-    M = y.shape[0]
-    accD = [[0 for x in range(N)] for y in range(M)]
-    for i in range(N):
-        for j in range(M):
-            accD[i][j] = dist[x[i], y[j]] + min(accD[i-1][j], accD[i-1][j-1], accD[i][j-1])
-    return accD[N-1][M-1]
+    N = x.shape[0] #Columns
+    M = y.shape[0] #Rows
+    accD = [[0 for x in range(M+1)] for y in range(N+1)]
+    for i in range(1, N+1):
+        accD[i][0] = 9999999999
+    for i in range(1, M+1):
+        accD[0][i] = 9999999999
+    accD[0][0] = 0
 
+    for i in range(1,N+1):
+        for j in range(1,M+1):
+            accD[i][j] = dist(x[i-1], y[j-1]) + min(accD[i-1][j], accD[i-1][j-1], accD[i][j-1])
+
+    retVal = accD[N][M]/(len(x)+len(y))
+    lenx = len(x)
+
+    return accD[N][M]/(N+M)
+
+def compareUtterances(data):
+    #Warning: slow implementation
+    D = [[0 for x in range(44)] for y in range(44)]
+
+    for i in range(0,44):
+        print(i)
+        for j in range(0, 44):
+            D1 = mfcc(data[i]['samples'])
+            D2 = mfcc(data[j]['samples'])
+            D[i][j] = dtw(D1,D2,calcDist)
+
+    plt.pcolormesh(D)
+    plt.savefig()
+    plt.show()
 
