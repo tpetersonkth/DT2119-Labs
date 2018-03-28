@@ -23,7 +23,7 @@ plt.show()
 
 diff = example_data[target] - output
 '''
-#D = proto.compareUtterances(data)
+D = proto.compareUtterances(data)
 
 D = np.load('insurance d.txt.npy')
 
