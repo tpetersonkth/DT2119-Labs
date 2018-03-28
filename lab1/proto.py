@@ -156,7 +156,8 @@ def cepstrum(input, nceps):
     return out
 
 def calcDist(x,y):
-    dist = np.linalg.norm(x - y)
+    dist = (x-y)
+    dist = np.sqrt(dist.dot(dist.T))
     return dist
 
 def dtw(x, y, dist):
@@ -200,6 +201,7 @@ def compareUtterances(data):
 
     for i in range(0,44):
         print(i)
+
         for j in range(0, 44):
             D1 = mfccMatrix[i]
             D2 = mfccMatrix[j]
