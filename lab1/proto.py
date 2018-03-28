@@ -31,7 +31,6 @@ def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, ncep
 
     mspec = logMelSpectrum(spec, samplingrate)
     ceps = cepstrum(mspec, nceps)
-    return ceps
     return lifter(ceps, liftercoeff)
 
 
@@ -151,7 +150,9 @@ def cepstrum(input, nceps):
     Note: you can use the function dct from scipy.fftpack.realtransforms
     """
 
-    out = dct(input, n=nceps, norm='ortho')
+    out = dct(input, norm='ortho')
+    out = out[:, 0:13]
+    #out = lifter(out)
     return out
 
 def dtw(x, y, dist):
