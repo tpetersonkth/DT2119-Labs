@@ -20,7 +20,7 @@ plt.show()
 
 diff = example_data[target] - output
 '''
-x = example_data['lmfcc']
+proto.compareUtterances(data)
 #distances = proto.calcDist()
 #output =
 #plt.pcolormesh(output.T)
