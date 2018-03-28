@@ -18,4 +18,5 @@ plt.subplot(2, 1, 2)
 plt.pcolormesh(output.T)
 plt.show()
 
+diff =  example_data['windowed'] - output
 print(data)

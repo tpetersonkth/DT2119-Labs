@@ -94,7 +94,7 @@ def windowing(input):
     window = hamming(input.shape[1], sym=0)
     new_frames = []
     for frame in input:
-        windowed = np.convolve(frame, window)
+        windowed = np.multiply(frame, window)
         new_frames.append(windowed)
 
 
