@@ -23,11 +23,24 @@ plt.show()
 
 diff = example_data[target] - output
 '''
-D = proto.compareUtterances(data)
+#D = proto.compareUtterances(data)
+
+D = np.load('insurance d.txt.npy')
+
+x = np.arange(60.).reshape(3,4,5)
+y = np.arange(60.).reshape(6,4,5)
+
+
 
 Z = linkage(D, method='complete')
 labels = tidigit2labels(data)
-dendrogram(Z, labels=labels)
+
+plt.figure(figsize=(25, 10))
+plt.title('Hierarchical Clustering Dendrogram')
+plt.xlabel('sample index')
+plt.ylabel('distance')
+p = dendrogram(Z, labels=labels)
+plt.show()
 print('done')
 
 #distances = proto.calcDist()
