@@ -92,13 +92,7 @@ def windowing(input):
     if you want to get the same results as in the example)
     """
     window = hamming(input.shape[1], sym=0)
-    new_frames = []
-    for frame in input:
-        windowed = np.multiply(frame, window)
-        new_frames.append(windowed)
-
-
-    npwindows = np.vstack(new_frames)
+    npwindows = np.multiply(input, window)
     return npwindows
 
 def powerSpectrum(input, nfft):
