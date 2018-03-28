@@ -205,7 +205,9 @@ def compareUtterances(data):
             D2 = mfccMatrix[j]
             D[i][j] = dtw(D1,D2,calcDist)
 
+    np.save('insurance d.txt', D)
     plt.pcolormesh(D)
     #plt.savefig()
     plt.show()
+    return D
 
