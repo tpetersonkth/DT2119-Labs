@@ -12,11 +12,11 @@ if np.array_equal(output, example_data['windowed']):
 
 
 plt.subplot(2, 1, 1)
-plt.title('windowed')
-plt.pcolormesh(example_data['windowed'].T)
+plt.title('Spec')
+plt.pcolormesh(example_data['spec'].T)
 plt.subplot(2, 1, 2)
 plt.pcolormesh(output.T)
 plt.show()
 
-diff =  example_data['windowed'] - output
+diff =  example_data['spec'] - output
 print(data)
