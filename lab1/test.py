@@ -27,10 +27,6 @@ diff = example_data[target] - output
 
 D = np.load('insurance d.txt.npy')
 
-x = np.arange(60.).reshape(3,4,5)
-y = np.arange(60.).reshape(6,4,5)
-
-
 
 Z = linkage(D, method='complete')
 labels = tidigit2labels(data)
