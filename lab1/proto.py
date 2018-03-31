@@ -205,8 +205,9 @@ def compareUtterances(data):
 
     DD = np.zeros((44,44))
     for i in range(0,44):
-        print(i)
-        for j in range(i, 44):
+        p = (i/44)*100
+        print("%.2f%%"%p)
+        for j in range(0, 44):
             D1 = mfccMatrix[i]
             D2 = mfccMatrix[j]
             out = dtw(D1, D2, calcDist)
