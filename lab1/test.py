@@ -25,7 +25,7 @@ diff = example_data[target] - output
 '''
 D = proto.compareUtterances(data)
 
-D = np.load('insurance d.txt.npy')
+#D = np.load('insurance d.txt.npy')
 
 
 Z = linkage(D, method='complete')
