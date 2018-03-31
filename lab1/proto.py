@@ -8,7 +8,7 @@ from lab1.tools import *
 from scipy.fftpack import fft
 from scipy.fftpack.realtransforms import dct
 import scipy
-def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, nceps=13, samplingrate=20000, liftercoeff=22):
+def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, nceps=13, samplingrate=20000, liftercoeff=22, liftering = True):
     """Computes Mel Frequency Cepstrum Coefficients.
 
     Args:
@@ -31,7 +31,20 @@ def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, ncep
 
     mspec = logMelSpectrum(spec, samplingrate)
     ceps = cepstrum(mspec, nceps)
-    return lifter(ceps, liftercoeff)
+
+
+
+
+    liftered = lifter(ceps, liftercoeff)
+
+    # plotting
+    plot_sub(liftered, 'Liftered', 8)
+
+    if liftering:
+        return liftered
+    else:
+        # for part 5
+        return liftered, mspec
 
 
 # Functions to be implemented ----------------------------------
@@ -61,11 +74,13 @@ def enframe(samples, winlen, winshift):
         start += winshift
 
     npframes = np.vstack(frames)
-    #plt.pcolormesh(npframes.T)
-    #plt.show()
+
+    # plotting
+    plot_sub(npframes, 'Enframe', 2)
+
     return npframes
 
-    
+
 def preemp(input, p=0.97):
     """
     Pre-emphasis filter.
@@ -80,6 +95,10 @@ def preemp(input, p=0.97):
     Note (you can use the function lfilter from scipy.signal)
     """
     emphasized = lfilter([1, -p], 1, input)
+
+    # plotting
+    plot_sub(emphasized, 'Pre Emphasis', 3)
+
     return emphasized
 
 
@@ -97,6 +116,10 @@ def windowing(input):
     """
     window = hamming(input.shape[1], sym=0)
     npwindows = np.multiply(input, window)
+
+    # plotting
+    plot_sub(npwindows, 'Hamming Window', 4)
+
     return npwindows
 
 def powerSpectrum(input, nfft):
@@ -114,6 +137,9 @@ def powerSpectrum(input, nfft):
     freqDom = fft(input,nfft)
     absVal = np.absolute(freqDom)
     retVal = np.square(absVal)
+
+    # plotting
+    plot_sub(retVal, 'Fast fourier transform', 5)
     return retVal
 
 def logMelSpectrum(input, samplingrate):
@@ -134,6 +160,9 @@ def logMelSpectrum(input, samplingrate):
     bank = trfbank(samplingrate, input.shape[1])
     ret = input.dot(bank.T)
     ret = np.log(ret)
+
+    plot_sub(ret, 'log Mel spectrum', 6)
+
     return ret
 
 
@@ -152,8 +181,20 @@ def cepstrum(input, nceps):
 
     out = dct(input, norm='ortho')
     out = out[:, 0:13]
-    #out = lifter(out)
+
+    plot_sub(out, 'Capstrum', 7)
+
+
     return out
+
+def plot_sub(data, title, count):
+
+    # plotting
+    ax = plt.subplot(8, 1, count)
+    ax.set_yticklabels([])
+    ax.set_xticklabels([])
+    ax.set_title(title)
+    plt.pcolormesh(data.T)
 
 def calcDist(x,y):
     dist = (x-y)
