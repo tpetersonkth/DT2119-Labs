@@ -1,5 +1,5 @@
 import numpy as np
-from tools2 import *
+from lab2.tools2 import *
 from sklearn.mixture import gmm
 import copy
 
@@ -71,7 +71,11 @@ def forward(log_emlik, log_startprob, log_transmat):
     Output:
         forward_prob: NxM array of forward log probabilities for each of the M states in the model
     """
-    log_startprob
+    alpha = log_startprob + log_emlik
+    for frame in log_emlik:
+        alpha = logsumexp(alpha + frame) + log_emlik
+
+    return alpha
 
 def backward(log_emlik, log_startprob, log_transmat):
     """Backward (beta) probabilities in log domain.
