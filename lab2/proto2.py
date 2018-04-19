@@ -23,8 +23,11 @@ def concatHMMs(hmmmodels, namelist):
     Example:
        wordHMMs['o'] = concatHMMs(phoneHMMs, ['sil', 'ow', 'sil'])
     """
-    for name in namelist:
-
+    wordHmm = hmmmodels[namelist[1]]
+    for i in range(1,len(namelist)):
+        print(namelist[i])
+        hmmmodels[namelist[i]]
+    print("concatHMMs")
 
 
 def gmmloglik(log_emlik, weights):
