@@ -76,7 +76,7 @@ def enframe(samples, winlen, winshift):
     npframes = np.vstack(frames)
 
     # plotting
-    plot_sub(npframes, 'Enframe', 2)
+    #plot_sub(npframes, 'Enframe', 2)
 
     return npframes
 
@@ -97,7 +97,7 @@ def preemp(input, p=0.97):
     emphasized = lfilter([1, -p], 1, input)
 
     # plotting
-    plot_sub(emphasized, 'Pre Emphasis', 3)
+    #plot_sub(emphasized, 'Pre Emphasis', 3)
 
     return emphasized
 
@@ -118,7 +118,7 @@ def windowing(input):
     npwindows = np.multiply(input, window)
 
     # plotting
-    plot_sub(npwindows, 'Hamming Window', 4)
+    #plot_sub(npwindows, 'Hamming Window', 4)
 
     return npwindows
 
@@ -139,7 +139,7 @@ def powerSpectrum(input, nfft):
     retVal = np.square(absVal)
 
     # plotting
-    plot_sub(retVal, 'Fast fourier transform', 5)
+    #plot_sub(retVal, 'Fast fourier transform', 5)
     return retVal
 
 def logMelSpectrum(input, samplingrate):
@@ -158,10 +158,28 @@ def logMelSpectrum(input, samplingrate):
     """
 
     bank = trfbank(samplingrate, input.shape[1])
+    #plt.figure(figsize=(10,5))
+
+
+
+    #plt.plot(input[1], linewidth=0.3, color='lightgrey')
+    #plt.plot(bank.T, linewidth=0.5, color='blue')
+
+    sample_out = input[1].dot(bank.T)
+    #plt.plot(sample_out, linewidth=1, color='green')
+
+    #plt.xlim((0,200))
+    #plt.ylim((0,20))
+
+    #plt.ylabel([])
+    #plt.xlabel([])
+    #plt.title('Mel Frequency banks')
+    #plt.show()
+
     ret = input.dot(bank.T)
     ret = np.log(ret)
 
-    plot_sub(ret, 'log Mel spectrum', 6)
+    #plot_sub(ret, 'log Mel spectrum', 6)
 
     return ret
 
