@@ -42,6 +42,7 @@ def concatHMMs(hmmmodels, namelist):
     print("concatHMMs")
 
 
+
 def gmmloglik(log_emlik, weights):
     """Log Likelihood for a GMM model based on Multivariate Normal Distribution.
 
@@ -56,9 +57,9 @@ def gmmloglik(log_emlik, weights):
     """
 
     means, covars = weights
-    likelihood = gmm.log_multivariate_normal_density(log_emlik, means, covars)
-    gaussloglikely = np.log(likelihood)
-    return gaussloglikely
+    likelihood = log_multivariate_normal_density_diag(log_emlik, means, covars)
+    gmmloglik = np.log(likelihood)
+    return gmmloglik
 
 def forward(log_emlik, log_startprob, log_transmat):
     """Forward (alpha) probabilities in log domain.
@@ -71,8 +72,8 @@ def forward(log_emlik, log_startprob, log_transmat):
     Output:
         forward_prob: NxM array of forward log probabilities for each of the M states in the model
     """
-    alpha = log_startprob + log_emlik
-    for frame in log_emlik:
+    alpha = log_startprob + log_emlik[0]
+    for frame in log_emlik[1:-1]:
         alpha = logsumexp(alpha + frame) + log_emlik
 
     return alpha
