@@ -38,9 +38,7 @@ def concatHMMs(hmmmodels, namelist):
         wordHmm['transmat'][c:c+4, c:c+4] = hmmmodels[namelist[i]]['transmat']
         wordHmm['means'][c:c+3,:] = hmmmodels[namelist[i]]['means']
         wordHmm['covars'][c:c + 3, :] = hmmmodels[namelist[i]]['covars']
-        print(namelist[i])
-    print("concatHMMs")
-
+    wordHmm['transmat'][-1, -1] = 1
 
 
 def gmmloglik(log_emlik, weights):
