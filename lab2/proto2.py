@@ -1,6 +1,8 @@
 import numpy as np
 from tools2 import *
 from sklearn.mixture import gmm
+import copy
+
 
 def concatHMMs(hmmmodels, namelist):
     """ Concatenates HMM models in a left to right manner
@@ -24,10 +26,19 @@ def concatHMMs(hmmmodels, namelist):
     Example:
        wordHMMs['o'] = concatHMMs(phoneHMMs, ['sil', 'ow', 'sil'])
     """
-    wordHmm = hmmmodels[namelist[1]]
-    for i in range(1,len(namelist)):
+    wordHmm = dict2 = copy.deepcopy(hmmmodels[namelist[0]])
+    d = 4*len(namelist)-(len(namelist)-1)
+    wordHmm['transmat'] = np.zeros((d,d))
+    wordHmm['means'] = np.zeros((3*len(namelist),13))
+    wordHmm['covars'] = np.zeros((3*len(namelist), 13))
+    wordHmm['startprob'] = np.zeros((1, 13))
+    wordHmm['startprob'][0,0] = 1
+    for i in range(0,len(namelist)):
+        c = i*3#c is the coordinate
+        wordHmm['transmat'][c:c+4, c:c+4] = hmmmodels[namelist[i]]['transmat']
+        wordHmm['means'][c:c+3,:] = hmmmodels[namelist[i]]['means']
+        wordHmm['covars'][c:c + 3, :] = hmmmodels[namelist[i]]['covars']
         print(namelist[i])
-        hmmmodels[namelist[i]]
     print("concatHMMs")
 
 
