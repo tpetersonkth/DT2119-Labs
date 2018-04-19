@@ -1,5 +1,6 @@
 import numpy as np
 from tools2 import *
+from sklearn.mixture import gmm
 
 def concatHMMs(hmmmodels, namelist):
     """ Concatenates HMM models in a left to right manner
@@ -43,6 +44,11 @@ def gmmloglik(log_emlik, weights):
         gmmloglik: scalar, log likelihood of data given the GMM model.
     """
 
+    means, covars = weights
+    likelihood = gmm.log_multivariate_normal_density(log_emlik, means, covars)
+    gaussloglikely = np.log(likelihood)
+    return gaussloglikely
+
 def forward(log_emlik, log_startprob, log_transmat):
     """Forward (alpha) probabilities in log domain.
 
@@ -54,6 +60,7 @@ def forward(log_emlik, log_startprob, log_transmat):
     Output:
         forward_prob: NxM array of forward log probabilities for each of the M states in the model
     """
+    log_startprob
 
 def backward(log_emlik, log_startprob, log_transmat):
     """Backward (beta) probabilities in log domain.
