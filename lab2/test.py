@@ -30,11 +30,15 @@ loglikelihood = tools2.log_multivariate_normal_density_diag(lmfcc, hmmTest['mean
 
 #Forward alogithm
 log_alpha = proto2.forward(loglikelihood, log_startprob ,log_trans)
-#diff = log_alpha - example_data['logalpha']
+diffa = log_alpha - example_data['logalpha']
+
+#Viterbi alogithm
+viter = proto2.viterbi(loglikelihood, log_startprob ,log_trans)
+diffv = viter[1] - example_data['vloglik'][1]
 
 #Backward alogithm
 log_beta = proto2.backward(loglikelihood, log_startprob ,log_trans)
-diff = log_beta - example_data['logbeta']
+diffb = log_beta - example_data['logbeta']
 
 #Print execution time
 print('Execution done in '+str(round((timer()-startTime),2))+" seconds")
