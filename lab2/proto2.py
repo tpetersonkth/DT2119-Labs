@@ -103,7 +103,7 @@ def forward(log_emlik, log_startprob, log_transmat):
 
     return alpha
 
-def backward(log_emlik, log_startprob, log_transmat):
+def backward(log_emlik, log_startprob, log_transmat, ref=None):
     """Backward (beta) probabilities in log domain.
 
     Args:
@@ -115,12 +115,19 @@ def backward(log_emlik, log_startprob, log_transmat):
         backward_prob: NxM array of backward log probabilities for each of the M states in the model
     """
 
-    beta = 0
-    for frame in np.flip(log_emlik[1:], axis=0):
-        logsum = frame + beta + log_transmat
+    beta = np.zeros(log_startprob.shape)
+    b_prob = [beta]
+    flipped = np.flip(log_emlik[1:], axis=0)
+    for frame in flipped:
+        s1 = frame + beta
+        logsum = s1 + log_transmat
         beta = logsumexp(logsum)
+        b_prob.append(beta)
 
-    p_backward = np.sum(beta + log_emlik[0] + log_startprob)
+
+    #p_backward = np.sum(beta + log_emlik[0] + log_startprob)
+    p_backward = np.flip(np.vstack(b_prob), axis=0)
+    diff = ref - p_backward
     return p_backward
 
 
