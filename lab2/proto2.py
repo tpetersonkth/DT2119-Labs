@@ -31,7 +31,7 @@ def concatHMMs(hmmmodels, namelist):
     wordHmm['transmat'] = np.zeros((d,d))
     wordHmm['means'] = np.zeros((3*len(namelist),13))
     wordHmm['covars'] = np.zeros((3*len(namelist), 13))
-    wordHmm['startprob'] = np.zeros((1, 13))
+    wordHmm['startprob'] = np.zeros((1, 3*len(namelist)))
     wordHmm['startprob'][0,0] = 1
     for i in range(0,len(namelist)):
         c = i*3#c is the coordinate
@@ -70,10 +70,36 @@ def forward(log_emlik, log_startprob, log_transmat):
 
     Output:
         forward_prob: NxM array of forward log probabilities for each of the M states in the model
+
+    N = x.shape[0]  # Columns
+    M = y.shape[0]  # Rows
+    accD = [[0 for x in range(M + 1)] for y in range(N + 1)]
+    accD = np.zeros((N + 1, M + 1))
+    for i in range(1, N + 1):
+        accD[i][0] = 9999999999
+    for i in range(1, M + 1):
+        accD[0][i] = 9999999999
+    accD[0][0] = 0
+
+    z = x[:, None] - y
+    z1 = np.square(z)
+    z2 = np.sum(z1, -1)
+    distz = np.sqrt(z2)
+    for i in range(1, N + 1):
+        for j in range(1, M + 1):
+            accD[i][j] = distz[i - 1, j - 1] + min(accD[i - 1][j], accD[i - 1][j - 1], accD[i][j - 1])
+    return accD[N][M] / (N + M)
     """
-    alpha = log_startprob + log_emlik[0]
-    for frame in log_emlik[1:-1]:
-        alpha = logsumexp(alpha + frame) + log_emlik
+    observations = len(log_emlik)#Each row in log_emlik corresponds to one observation
+    states = len(log_emlik[0])
+    alpha = np.zeros((observations,states))
+
+    for j in range(0,states):
+        alpha[0,j] = log_startprob[0,j] + log_emlik[0,j]
+
+    for i in range(1,observations):
+        for j in range(0, states):
+            alpha[i,j] = logsumexp(alpha[i-1,:] + log_transmat[:,j]) + log_emlik[i,j]
 
     return alpha
 
