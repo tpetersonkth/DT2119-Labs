@@ -19,9 +19,9 @@ loglikelihood = log_multivariate_normal_density_diag(ex, hmmTest['means'], hmmTe
 diff = example_data['obsloglik'] - loglikelihood
 
 log_startprob = np.log(hmmTest['startprob'])
-log_trans = np.log(hmmTest['transmat'])
+log_trans = np.log(hmmTest['transmat'])[:-1, :-1]
 
-proto2.forward(loglikelihood, log_startprob ,log_trans)
+proto2.backward(loglikelihood, log_startprob ,log_trans)
 
 print('done')
 
