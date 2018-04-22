@@ -17,6 +17,9 @@ hmmTest = proto2.concatHMMs(phoneHMMs,modellist['o'])
 ex = example_data['lmfcc']
 loglikelihood = log_multivariate_normal_density_diag(ex, hmmTest['means'], hmmTest['covars'])
 diff = example_data['obsloglik'] - loglikelihood
+
+proto2.forward(loglikelihood, hmmTest['startprob'], hmmTest['transmat'])
+
 print('done')
 
 
