@@ -70,25 +70,6 @@ def forward(log_emlik, log_startprob, log_transmat):
 
     Output:
         forward_prob: NxM array of forward log probabilities for each of the M states in the model
-
-    N = x.shape[0]  # Columns
-    M = y.shape[0]  # Rows
-    accD = [[0 for x in range(M + 1)] for y in range(N + 1)]
-    accD = np.zeros((N + 1, M + 1))
-    for i in range(1, N + 1):
-        accD[i][0] = 9999999999
-    for i in range(1, M + 1):
-        accD[0][i] = 9999999999
-    accD[0][0] = 0
-
-    z = x[:, None] - y
-    z1 = np.square(z)
-    z2 = np.sum(z1, -1)
-    distz = np.sqrt(z2)
-    for i in range(1, N + 1):
-        for j in range(1, M + 1):
-            accD[i][j] = distz[i - 1, j - 1] + min(accD[i - 1][j], accD[i - 1][j - 1], accD[i][j - 1])
-    return accD[N][M] / (N + M)
     """
     observations = len(log_emlik)#Each row in log_emlik corresponds to one observation
     states = len(log_emlik[0])
