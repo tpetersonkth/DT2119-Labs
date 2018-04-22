@@ -13,10 +13,10 @@ modellist = {}
 for digit in prondict.keys():
     modellist[digit] = ['sil'] + prondict[digit] + ['sil']
 
-hmmTest = proto2.concatHMMs(phoneHMMs,modellist['1'])
-
-loglikelihood = log_multivariate_normal_density_diag(hmmTest, hmmTest['means'], hmmTest['covars'])
-
+hmmTest = proto2.concatHMMs(phoneHMMs,modellist['o'])
+ex = example_data['lmfcc']
+loglikelihood = log_multivariate_normal_density_diag(ex, hmmTest['means'], hmmTest['covars'])
+diff = example_data['obsloglik'] - loglikelihood
 print('done')
 
 
