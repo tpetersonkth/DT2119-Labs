@@ -84,7 +84,31 @@ def forward(log_emlik, log_startprob, log_transmat):
 
     return alpha
 
-def backward(log_emlik, log_startprob, log_transmat):
+def forward_mat(log_emlik, log_startprob, log_transmat):
+    """Forward (alpha) probabilities in log domain.
+
+    Args:
+        log_emlik: NxM array of emission log likelihoods, N frames, M states
+        log_startprob: log probability to start in state i
+        log_transmat: log transition probability from state i to j
+
+    Output:
+        forward_prob: NxM array of forward log probabilities for each of the M states in the model
+    """
+    observations = len(log_emlik)#Each row in log_emlik corresponds to one observation
+    states = len(log_emlik[0])
+    alpha = np.zeros(log_emlik.shape)
+
+    alpha = np.zeros(log_startprob.shape)
+    alpha_tmp = [alpha]
+
+    for frame in log_emlik[1:]:
+        alpha = logsumexp(alpha + log_transmat) + frame
+        alpha_tmp.append(alpha)
+    alpha = np.vstack(alpha_tmp)
+    return alpha
+
+def backward(log_emlik, log_startprob, log_transmat, ref=None):
     """Backward (beta) probabilities in log domain.
 
     Args:
@@ -96,14 +120,40 @@ def backward(log_emlik, log_startprob, log_transmat):
         backward_prob: NxM array of backward log probabilities for each of the M states in the model
     """
 
-    beta = 0
-    for frame in np.flip(log_emlik[1:], axis=0):
-        logsum = frame + beta + log_transmat
+    beta = np.zeros(log_startprob.shape)
+    b_prob = [beta]
+    flipped = np.flip(log_emlik[1:], axis=0)
+    for frame in flipped:
+        s1 = frame + beta
+        logsum = s1 + log_transmat
         beta = logsumexp(logsum)
+        b_prob.append(beta)
 
-    p_backward = np.sum(beta + log_emlik[0] + log_startprob)
+
+    #p_backward = np.sum(beta + log_emlik[0] + log_startprob)
+    p_backward = np.flip(np.vstack(b_prob), axis=0)
+    diff = ref - p_backward
     return p_backward
 
+def backward2(emlike, startprob, transmat):
+    """Backward (beta) probabilities in log domain.
+    Args:
+        log_emlik: NxM array of emission log likelihoods, N frames, M states
+        log_startprob: log probability to start in state i
+        log_transmat: transition log probability from state i to j
+    Output:
+        backward_prob: NxM array of backward log probabilities for each of the M states in the model
+        beta (backward_prob) is a conditional probability of the observations GIVEN the state at time step t.
+    """
+    N, M = emlike.shape
+    backward_prob = np.empty((N, M))
+    # INIT
+    backward_prob[:, -1] = 0.0
+    # BACKWARD PASS
+    for j in range(N):
+        for n in range(M-1, -1, -1):
+            backward_prob[j, n] = logsumexp(transmat[j] + emlike[n+1] + backward_prob[n+1])
+    return backward_prob
 
 def viterbi(log_emlik, log_startprob, log_transmat):
     """Viterbi path.
