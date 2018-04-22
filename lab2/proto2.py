@@ -82,6 +82,7 @@ def backward(log_emlik, log_startprob, log_transmat):
     Output:
         backward_prob: NxM array of backward log probabilities for each of the M states in the model
     """
+    
 
 def viterbi(log_emlik, log_startprob, log_transmat):
     """Viterbi path.
