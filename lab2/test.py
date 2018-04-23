@@ -40,11 +40,8 @@ diffv2 = viter[1] - example_data['vloglik'][1]
 
 
 #Backward alogithm
-ref = example_data['logbeta']
 log_beta = proto2.backward(loglikelihood, log_startprob ,log_trans)
-#diff = log_beta - ref
-
-
+diffb = log_beta - example_data['logbeta']
 
 #Print execution time
 print('Execution done in '+str(round((timer()-startTime),2))+" seconds")
