@@ -34,7 +34,8 @@ diffa = log_alpha - example_data['logalpha']
 
 #Viterbi alogithm
 viter = proto2.viterbi(loglikelihood, log_startprob ,log_trans)
-diffv = viter[1] - example_data['vloglik'][1]
+diffv1 = viter[0] - example_data['vloglik'][0]
+diffv2 = viter[1] - example_data['vloglik'][1]
 
 #Backward alogithm
 log_beta = proto2.backward(loglikelihood, log_startprob ,log_trans)
