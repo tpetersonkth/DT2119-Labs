@@ -171,19 +171,28 @@ def viterbi(log_emlik, log_startprob, log_transmat):
     states = len(log_emlik[0])
     V = np.zeros((observations, states))
     B = np.zeros((observations,states))
-    test = np.zeros(observations)
 
-    for j in range(0, states):
-        V[0, j] = log_startprob[0, j] + log_emlik[0, j]
+    #Initialize first row of V
+    V[0, :] = log_startprob[0, :] + log_emlik[0, :]
 
-    for i in range(1, observations):
+    #Propagate best paths foward
+    for o in range(1, observations):
         for j in range(0, states):
-            V[i, j] = np.max(V[i - 1, :] + log_transmat[:, j]) + log_emlik[i, j]
-        to = np.argmax(V[i,:])
-        test[i] = to
-        #B[i,j] = np.argmax(V[i, :] + log_transmat[:, ])
-    V = np.max(V[-1,:])
-    return (V,test)
+            V[o,j] = np.max(V[o - 1, :] + log_transmat[:, j]) + log_emlik[o, j]
+            B[o,j] = np.argmax(V[o - 1, :] + log_transmat[:, j])
+
+    lenOfShortest = np.max(V[-1, :])
+
+    #Extract best path
+    state = int(np.argmax(V[-1,:]))
+    bestPath = [state]
+    for o in range(observations-1, 0, -1):
+        state = int(B[o,state])
+        bestPath = [state] + bestPath
+
+    # Return in same format as in examples
+    return (lenOfShortest,np.array(bestPath))
+
 
 def statePosteriors(log_alpha, log_beta):
     """State posterior (gamma) probabilities in log domain.
