@@ -24,31 +24,33 @@ hmmTest = proto2.concatHMMs(phoneHMMs,modellist['o'])
 log_startprob = np.log(hmmTest['startprob'])
 log_trans = np.log(hmmTest['transmat'])[:-1, :-1]
 
-#Calculate loglikelihood(log_emslik)
-loglikelihood = tools2.log_multivariate_normal_density_diag(lmfcc, hmmTest['means'], hmmTest['covars'])
-#diff = example_data['obsloglik'] - loglikelihood
 
-#Forward alogithm
-
-log_alpha = proto2.forward(loglikelihood, log_startprob ,log_trans)
-diffa = log_alpha - example_data['logalpha']
-
-#Viterbi alogithm
-viter = proto2.viterbi(loglikelihood, log_startprob ,log_trans)
-diffv1 = viter[0] - example_data['vloglik'][0]
-diffv2 = viter[1] - example_data['vloglik'][1]
-
-
-#Backward alogithm
-log_beta = proto2.backward(loglikelihood, log_startprob ,log_trans)
-diffb = log_beta - example_data['logbeta']
-
-ref = example_data['loggamma']
-log_gamma = proto2.statePosteriors(example_data['logalpha'],example_data['logbeta'])
-diffg = log_gamma - ref
-
-log_gamma = proto2.updateMeanAndVar(lmfcc,example_data['loggamma'])
-diffg = log_gamma - ref
+proto2.baum_welch(lmfcc,hmmTest['means'], hmmTest['covars'], log_startprob, log_trans, example_data)
+#
+# #Calculate loglikelihood(log_emslik)
+# loglikelihood = tools2.log_multivariate_normal_density_diag(lmfcc, hmmTest['means'], hmmTest['covars'])
+# #diff = example_data['obsloglik'] - loglikelihood
+#
+# #Forward alogithm
+# log_alpha = proto2.forward(loglikelihood, log_startprob ,log_trans)
+# diffa = log_alpha - example_data['logalpha']
+#
+# #Viterbi alogithm
+# viter = proto2.viterbi(loglikelihood, log_startprob ,log_trans)
+# diffv1 = viter[0] - example_data['vloglik'][0]
+# diffv2 = viter[1] - example_data['vloglik'][1]
+#
+#
+# #Backward alogithm
+# log_beta = proto2.backward(loglikelihood, log_startprob ,log_trans)
+# diffb = log_beta - example_data['logbeta']
+#
+# ref = example_data['loggamma']
+# log_gamma = proto2.statePosteriors(example_data['logalpha'],example_data['logbeta'])
+# diffg = log_gamma - ref
+#
+# log_gamma = proto2.updateMeanAndVar(lmfcc,example_data['loggamma'])
+# diffg = log_gamma - ref
 
 #Print execution time
 print('Execution done in '+str(round((timer()-startTime),2))+" seconds")
