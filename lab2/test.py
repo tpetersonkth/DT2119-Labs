@@ -25,7 +25,10 @@ log_startprob = np.log(hmmTest['startprob'])
 log_trans = np.log(hmmTest['transmat'])[:-1, :-1]
 
 
+
 proto2.baum_welch(lmfcc,hmmTest['means'], hmmTest['covars'], log_startprob, log_trans, example_data)
+
+loglikelihood = tools2.log_multivariate_normal_density_diag(lmfcc, hmmTest['means'], hmmTest['covars'])
 
 #Forward alogithm
 log_alpha = proto2.forward(loglikelihood, log_startprob ,log_trans)
