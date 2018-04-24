@@ -198,3 +198,13 @@ def updateMeanAndVar(X, log_gamma, varianceFloor=5.0):
          means: MxD mean vectors for each state
          covars: MxD covariance (variance) vectors for each state
     """
+    gamma = np.exp(log_gamma)
+    prod = X[:,None,:] * gamma[:,:, None]
+    means = np.mean(prod,axis=0)
+    covars = np.maximum(np.var(prod, axis=0), varianceFloor)
+    return means, covars
+
+
+def baum_welch():
+    pass
+
