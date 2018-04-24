@@ -29,7 +29,6 @@ loglikelihood = tools2.log_multivariate_normal_density_diag(lmfcc, hmmTest['mean
 #diff = example_data['obsloglik'] - loglikelihood
 
 #Forward alogithm
-
 log_alpha = proto2.forward(loglikelihood, log_startprob ,log_trans)
 diffa = log_alpha - example_data['logalpha']
 
@@ -43,11 +42,36 @@ diffv2 = viter[1] - example_data['vloglik'][1]
 log_beta = proto2.backward(loglikelihood, log_startprob ,log_trans)
 diffb = log_beta - example_data['logbeta']
 
-ref = example_data['loggamma']
+#State Posteriors
 log_gamma = proto2.statePosteriors(example_data['logalpha'],example_data['logbeta'])
-diffg = log_gamma - ref
+diffg = log_gamma - example_data['loggamma']
 
 #Print execution time
 print('Execution done in '+str(round((timer()-startTime),2))+" seconds")
+
+#Plot graphs
+plt.figure(figsize=(20,10))
+ax = plt.subplot(1, 1, 1)
+ax.set_title('lmfcc')
+ax.set_yticklabels([])
+ax.set_xticklabels([])
+plt.pcolormesh(np.transpose(lmfcc))
+plt.show()
+
+plt.figure(figsize=(20,10))
+ax = plt.subplot(1, 1, 1)
+plt.title('lmfcc')
+ax.set_yticklabels([])
+ax.set_xticklabels([])
+plt.pcolormesh(np.transpose(lmfcc))
+plt.show()
+
+plt.figure(figsize=(20,10))
+ax = plt.subplot(1, 1, 1)
+ax.set_title('log alpha')
+ax.set_yticklabels([])
+ax.set_xticklabels([])
+plt.pcolormesh(np.transpose(log_alpha))
+plt.show()
 
 
