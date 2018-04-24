@@ -169,26 +169,19 @@ def viterbi(log_emlik, log_startprob, log_transmat):
     return (lenOfShortest,np.array(bestPath))
 
 
-def statePosteriors(log_alpha, log_beta):
-    """State posterior (gamma) probabilities in log domain.
+def statePosteriors(log_alpha, log_beta): return log_alpha + log_beta - logsumexp(log_alpha[-1])
+"""State posterior (gamma) probabilities in log domain.
 
-    Args:
-        log_alpha: NxM array of log forward (alpha) probabilities
-        log_beta: NxM array of log backward (beta) probabilities
-    where N is the number of frames, and M the number of states
+Args:
+    log_alpha: NxM array of log forward (alpha) probabilities
+    log_beta: NxM array of log backward (beta) probabilities
+where N is the number of frames, and M the number of states
 
-    Output:
-        log_gamma: NxM array of gamma probabilities for each of the M states in the model
-    """
-    observations = len(log_alpha)  #Each row in log_alpha corresponds to one observation
-    states = len(log_alpha[0])
-
-    log_gamma = np.zeros((observations,states))
-    subThis = logsumexp(log_alpha[-1])
-    log_gamma = log_alpha + log_beta - subThis
+Output:
+    log_gamma: NxM array of gamma probabilities for each of the M states in the model
+"""
 
 
-    return log_gamma
 
 def updateMeanAndVar(X, log_gamma, varianceFloor=5.0):
     """ Update Gaussian parameters with diagonal covariance
