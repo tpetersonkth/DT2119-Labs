@@ -127,9 +127,6 @@ def backward(log_emlik, log_startprob, log_transmat):
     p_backward = np.flip(np.vstack(b_prob), axis=0)
     return p_backward
 
-
-
-
 def viterbi(log_emlik, log_startprob, log_transmat):
     """Viterbi path.
 
