@@ -47,6 +47,9 @@ ref = example_data['loggamma']
 log_gamma = proto2.statePosteriors(example_data['logalpha'],example_data['logbeta'])
 diffg = log_gamma - ref
 
+log_gamma = proto2.updateMeanAndVar(lmfcc,example_data['loggamma'])
+diffg = log_gamma - ref
+
 #Print execution time
 print('Execution done in '+str(round((timer()-startTime),2))+" seconds")
 
