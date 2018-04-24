@@ -43,8 +43,9 @@ diffv2 = viter[1] - example_data['vloglik'][1]
 log_beta = proto2.backward(loglikelihood, log_startprob ,log_trans)
 diffb = log_beta - example_data['logbeta']
 
+ref = example_data['loggamma']
 log_gamma = proto2.statePosteriors(example_data['logalpha'],example_data['logbeta'])
-diffg = log_gamma- example_data['loggamma']
+diffg = log_gamma - ref
 
 #Print execution time
 print('Execution done in '+str(round((timer()-startTime),2))+" seconds")
