@@ -169,18 +169,18 @@ def viterbi(log_emlik, log_startprob, log_transmat):
     return (lenOfShortest,np.array(bestPath))
 
 
-def statePosteriors(log_alpha, log_beta): return log_alpha + log_beta - logsumexp(log_alpha[-1])
-"""State posterior (gamma) probabilities in log domain.
+def statePosteriors(log_alpha, log_beta):
+    """State posterior (gamma) probabilities in log domain.
 
-Args:
-    log_alpha: NxM array of log forward (alpha) probabilities
-    log_beta: NxM array of log backward (beta) probabilities
-where N is the number of frames, and M the number of states
+    Args:
+        log_alpha: NxM array of log forward (alpha) probabilities
+        log_beta: NxM array of log backward (beta) probabilities
+    where N is the number of frames, and M the number of states
 
-Output:
-    log_gamma: NxM array of gamma probabilities for each of the M states in the model
-"""
-
+    Output:
+        log_gamma: NxM array of gamma probabilities for each of the M states in the model
+    """
+    return log_alpha + log_beta - logsumexp(log_alpha[-1])
 
 
 def updateMeanAndVar(X, log_gamma, varianceFloor=5.0):
@@ -200,11 +200,27 @@ def updateMeanAndVar(X, log_gamma, varianceFloor=5.0):
     """
     gamma = np.exp(log_gamma)
     prod = X[:,None,:] * gamma[:,:, None]
-    means = np.mean(prod,axis=0)
-    covars = np.maximum(np.var(prod, axis=0), varianceFloor)
+    normalize = np.sum(gamma,axis=0)[:,None]
+    means = np.sum(prod,axis=0) / normalize
+    covars = np.maximum(np.var(prod, axis=0), varianceFloor)/normalize
+    inspect = prod[0,:,:]
     return means, covars
 
 
-def baum_welch():
-    pass
+def baum_welch(lmfcc, init_means, init_covars,  log_startprob, log_trans,example_data, max_iter=20, stop_threshold=1.0):
+    means = init_means
+    covars = init_covars
+    for i in range(max_iter):
+        loglikelihood = log_multivariate_normal_density_diag(lmfcc, means, covars)
+        print(np.mean(loglikelihood))
+        log_alpha = forward(loglikelihood, log_startprob, log_trans)
+        log_beta = backward(loglikelihood, log_startprob, log_trans)
+        log_gamma = statePosteriors(log_alpha, log_beta)
+        means_, covars_ = updateMeanAndVar(lmfcc, log_gamma)
+        diff = means-means_
+        print('mean change',np.mean(diff))
+        means = means_
+        covars = covars_
+
+
 
