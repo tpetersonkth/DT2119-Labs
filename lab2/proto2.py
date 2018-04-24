@@ -202,6 +202,8 @@ def updateMeanAndVar(X, log_gamma, varianceFloor=5.0):
     prod = X[:,None,:] * gamma[:,:, None]
     normalize = np.sum(gamma,axis=0)[:,None]
     means = np.sum(prod,axis=0) / normalize
+
+
     covars = np.maximum(np.var(prod, axis=0), varianceFloor)/normalize
     inspect = prod[0,:,:]
     return means, covars
