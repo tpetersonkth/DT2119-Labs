@@ -165,7 +165,7 @@ def viterbi(log_emlik, log_startprob, log_transmat):
         state = int(B[o,state])
         bestPath = [state] + bestPath
 
-    # Return in same format as in examples
+    #Return in same format as in the example
     return (lenOfShortest,np.array(bestPath))
 
 
@@ -180,6 +180,14 @@ def statePosteriors(log_alpha, log_beta):
     Output:
         log_gamma: NxM array of gamma probabilities for each of the M states in the model
     """
+    observations = len(log_alpha)  #Each row in log_alpha corresponds to one observation
+    states = len(log_alpha[0])
+
+    log_gamma = np.zeros((observations,states))
+    subThis = np.sum(np.exp(log_alpha[-1]))
+    log_gamma = log_alpha + log_beta - subThis
+
+    return log_gamma
 
 def updateMeanAndVar(X, log_gamma, varianceFloor=5.0):
     """ Update Gaussian parameters with diagonal covariance
