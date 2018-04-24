@@ -184,8 +184,9 @@ def statePosteriors(log_alpha, log_beta):
     states = len(log_alpha[0])
 
     log_gamma = np.zeros((observations,states))
-    subThis = np.sum(np.exp(log_alpha[-1]))
+    subThis = logsumexp(log_alpha[-1])
     log_gamma = log_alpha + log_beta - subThis
+
 
     return log_gamma
 
