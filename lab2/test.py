@@ -49,7 +49,7 @@ log_gamma = proto2.statePosteriors(example_data['logalpha'],example_data['logbet
 diffg = log_gamma - example_data['loggamma']
 
 log_gamma = proto2.updateMeanAndVar(lmfcc,example_data['loggamma'])
-diffg = log_gamma - ref
+
 
 
 #Print execution time
