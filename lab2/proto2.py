@@ -119,8 +119,7 @@ def backward(log_emlik, log_startprob, log_transmat):
     beta = np.zeros(log_startprob.shape)
     b_prob = [beta]
     for frame in np.flip(log_emlik[1:], axis=0):
-        s1 = frame + beta
-        logsum = s1 + log_transmat
+        logsum = frame + beta + log_transmat
         beta = logsumexp(logsum, axis=1)
         b_prob.append(beta)
 
@@ -202,6 +201,8 @@ def updateMeanAndVar(X, log_gamma, varianceFloor=5.0):
     summed = np.sum(prod,axis=0)
     means = summed / normalize
 
+    naivemeans = np.mean(prod, axis=0)
+
     diff1 = X[:,None,:]-means[None,...]
     diff2 = diff1**2
     diff3 = diff2 * gamma[...,None]
@@ -213,21 +214,24 @@ def updateMeanAndVar(X, log_gamma, varianceFloor=5.0):
     return means, covars
 
 
-def baum_welch(lmfcc, init_means, init_covars,  log_startprob, log_trans,example_data, max_iter=20, stop_threshold=1.0):
+def baum_welch(lmfcc, init_means, init_covars,  log_startprob, log_trans,example_data, max_iter=200, stop_threshold=1.0):
     means = init_means
     covars = init_covars
     for i in range(max_iter):
         loglikelihood = log_multivariate_normal_density_diag(lmfcc, means, covars)
-        print(np.mean(loglikelihood))
+        print('loglikelihood', np.mean(loglikelihood))
         log_alpha = forward(loglikelihood, log_startprob, log_trans)
         log_beta = backward(loglikelihood, log_startprob, log_trans)
         log_gamma = statePosteriors(log_alpha, log_beta)
         means_, covars_ = updateMeanAndVar(lmfcc, log_gamma)
         diff = means-means_
-        print('current means',np.mean(means))
-        print('current covars', np.mean(covars))
+
+        # print('old means', np.mean(means))
+        # print('new means',np.mean(means_))
+        # print('old covars', np.mean(covars))
+        # print('new covars', np.mean(covars_))
         means = means_
-        covars = covars_
+        #covars = covars_
 
     print("Baum Welch Done!")
 
