@@ -11,7 +11,14 @@ data = np.load('lab2_data.npz')['data']
 example_data = np.load('lab2_example.npz')['example'].item()
 lmfcc_example = example_data['lmfcc']
 phoneHMMs = np.load('lab2_models.npz')['phoneHMMs'].item()
-lmfcc = data[10]['lmfcc']
+lmfcc4Ma = data[10]['lmfcc']
+lmfcc4Mb = data[11]['lmfcc']
+lmfcc4Fa = data[32]['lmfcc']
+lmfcc4Fb = data[33]['lmfcc']
+lmfcc6Ma = data[14]['lmfcc']
+lmfcc6Mb = data[15]['lmfcc']
+lmfcc6Fa = data[36]['lmfcc']
+lmfcc6Fb = data[37]['lmfcc']
 
 #Start timer
 startTime = timer()
@@ -56,5 +63,48 @@ print('Execution done in '+str(round((timer()-startTime),2))+" seconds")
 #plt = plotting.plotEachStep(lmfcc_example,loglikelihood,log_alpha,log_beta,log_gamma)
 #plt.show()
 
-plotting.plotBestPath(log_alpha,viter[1])
+#plotting.plotBestPath(log_alpha,viter[1])
+#plt.show()
+
+#Plot 4.1
+hmmTest = proto2.concatHMMs(phoneHMMs,modellist['6'])
+Prob6Ma = tools2.log_multivariate_normal_density_diag(lmfcc6Ma, hmmTest['means'], hmmTest['covars'])
+Prob6Mb = tools2.log_multivariate_normal_density_diag(lmfcc6Mb, hmmTest['means'], hmmTest['covars'])
+Prob6Fa = tools2.log_multivariate_normal_density_diag(lmfcc6Fa, hmmTest['means'], hmmTest['covars'])
+Prob6Fb = tools2.log_multivariate_normal_density_diag(lmfcc6Fa, hmmTest['means'], hmmTest['covars'])
+
+plt.figure(figsize=(10, 10))
+ax = plt.subplot(4, 1, 1)
+plt.yticks(np.arange(0, 18 + 1, 1.0))
+ax.set_title('Prob6Ma')
+for tick in ax.yaxis.get_major_ticks():
+    tick.label.set_fontsize(6)
+ax.set_xticklabels([])
+plt.pcolormesh(np.transpose(Prob6Ma))
+
+ax = plt.subplot(4, 1, 2)
+plt.yticks(np.arange(0, 18 + 1, 1.0))
+ax.set_title('Prob6Mb')
+for tick in ax.yaxis.get_major_ticks():
+    tick.label.set_fontsize(6)
+ax.set_xticklabels([])
+plt.pcolormesh(np.transpose(Prob6Mb))
+
+ax = plt.subplot(4, 1, 3)
+plt.yticks(np.arange(0, 18 + 1, 1.0))
+ax.set_title('Prob6Fa')
+for tick in ax.yaxis.get_major_ticks():
+    tick.label.set_fontsize(6)
+ax.set_xticklabels([])
+plt.pcolormesh(np.transpose(Prob6Fa))
+
+ax = plt.subplot(4, 1, 4)
+plt.yticks(np.arange(0, 18 + 1, 1.0))
+ax.set_title('Prob6Fb')
+for tick in ax.yaxis.get_major_ticks():
+    tick.label.set_fontsize(6)
+ax.set_xticklabels([])
+plt.pcolormesh(np.transpose(Prob6Fb))
+
+
 plt.show()
