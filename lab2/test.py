@@ -21,10 +21,19 @@ for digit in prondict.keys():
     modellist[digit] = ['sil'] + prondict[digit] + ['sil']
 
 #Generate HMM for the word zero
-hmmTest = proto2.concatHMMs(phoneHMMs,modellist['9'])
+hmmTest = proto2.concatHMMs(phoneHMMs,modellist['o'])
 log_startprob = np.log(hmmTest['startprob'])
 log_trans = np.log(hmmTest['transmat'])[:-1, :-1]
 
+
+loglikelihood = tools2.log_multivariate_normal_density_diag(lmfcc_example, hmmTest['means'], hmmTest['covars'])
+
+#Forward alogithm
+ref = example_data['logalpha']
+log_alpha = proto2.forward(loglikelihood, log_startprob ,log_trans, ref)
+
+target = log_alpha - ref
+diffa = log_alpha - example_data['logalpha']
 
 
 proto2.baum_welch(lmfcc_example, hmmTest['means'], hmmTest['covars'], log_startprob, log_trans, example_data)
@@ -32,7 +41,7 @@ proto2.baum_welch(lmfcc_example, hmmTest['means'], hmmTest['covars'], log_startp
 loglikelihood = tools2.log_multivariate_normal_density_diag(lmfcc_example, hmmTest['means'], hmmTest['covars'])
 
 #Forward alogithm
-log_alpha = proto2.forward(loglikelihood, log_startprob ,log_trans)
+log_alpha = proto2.forward_mat(loglikelihood, log_startprob ,log_trans)
 diffa = log_alpha - example_data['logalpha']
 
 #Viterbi alogithm

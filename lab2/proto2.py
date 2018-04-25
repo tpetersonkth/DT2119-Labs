@@ -60,7 +60,7 @@ def gmmloglik(log_emlik, weights):
     gmmloglik = np.log(likelihood)
     return gmmloglik
 
-def forward(log_emlik, log_startprob, log_transmat):
+def forward(log_emlik, log_startprob, log_transmat, ref=None):
     """Forward (alpha) probabilities in log domain.
 
     Args:
@@ -79,12 +79,14 @@ def forward(log_emlik, log_startprob, log_transmat):
         alpha[0,j] = log_startprob[0,j] + log_emlik[0,j]
 
     for i in range(1,observations):
+        a1 = np.zeros((states,states))
+        frame = np.zeros(states)
         for j in range(0, states):
             alpha[i,j] = logsumexp(alpha[i-1,:] + log_transmat[:,j]) + log_emlik[i,j]
 
     return alpha
 
-def forward_mat(log_emlik, log_startprob, log_transmat):
+def forward_mat(log_emlik, log_startprob, log_transmat, ref=None):
     """Forward (alpha) probabilities in log domain.
 
     Args:
@@ -95,11 +97,14 @@ def forward_mat(log_emlik, log_startprob, log_transmat):
     Output:
         forward_prob: NxM array of forward log probabilities for each of the M states in the model
     """
-    alpha = np.zeros(log_startprob.shape)
+    alpha = log_startprob + log_emlik[0]
     alpha_tmp = [alpha]
 
     for frame in log_emlik[1:]:
-        alpha = logsumexp(alpha + log_transmat) + frame
+        a1 = alpha.reshape((9,1)) + log_transmat
+        nn = log_transmat - a1
+        a2 = logsumexp(a1, axis=1)
+        alpha = a2 + frame
         alpha_tmp.append(alpha)
     alpha = np.vstack(alpha_tmp)
     return alpha
