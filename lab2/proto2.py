@@ -214,8 +214,6 @@ def updateMeanAndVar(X, log_gamma, varianceFloor=5.0):
     summed = np.sum(diff3, axis=0)
     covars = np.maximum(summed/normalize, varianceFloor)
 
-
-
     return means, covars
 
 
