@@ -199,12 +199,16 @@ def updateMeanAndVar(X, log_gamma, varianceFloor=5.0):
     prod = X[:,None,:] * gamma[:,:, None]
 
     normalize = np.sum(gamma,axis=0)[:,None]
-    means = np.sum(prod,axis=0) / normalize
+    summed = np.sum(prod,axis=0)
+    means = summed / normalize
 
-    gammar = np.sum(gamma, axis=0)
-    diff = X[:,None,:]-means[None,...]
-    covars = diff * gammar[:,None]/normalize
-    #covars = np.maximum(np.var(prod, axis=0), varianceFloor)/normalize
+    diff1 = X[:,None,:]-means[None,...]
+    diff2 = diff1**2
+    diff3 = diff2 * gamma[...,None]
+    summed = np.sum(diff3, axis=0)
+    covars = np.maximum(summed/normalize, varianceFloor)
+
+
 
     return means, covars
 
@@ -220,9 +224,12 @@ def baum_welch(lmfcc, init_means, init_covars,  log_startprob, log_trans,example
         log_gamma = statePosteriors(log_alpha, log_beta)
         means_, covars_ = updateMeanAndVar(lmfcc, log_gamma)
         diff = means-means_
-        print('mean change',np.mean(diff))
+        print('current means',np.mean(means))
+        print('current covars', np.mean(covars))
         means = means_
         covars = covars_
+
+    print("Baum Welch Done!")
 
 
 

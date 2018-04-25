@@ -8,8 +8,9 @@ from timeit import default_timer as timer
 #Load Data
 data = np.load('lab2_data.npz')['data']
 example_data = np.load('lab2_example.npz')['example'].item()
-lmfcc = example_data['lmfcc']
+lmfcc_example = example_data['lmfcc']
 phoneHMMs = np.load('lab2_models.npz')['phoneHMMs'].item()
+lmfcc = data[10]['lmfcc']
 
 #Start timer
 startTime = timer()
@@ -20,15 +21,15 @@ for digit in prondict.keys():
     modellist[digit] = ['sil'] + prondict[digit] + ['sil']
 
 #Generate HMM for the word zero
-hmmTest = proto2.concatHMMs(phoneHMMs,modellist['o'])
+hmmTest = proto2.concatHMMs(phoneHMMs,modellist['9'])
 log_startprob = np.log(hmmTest['startprob'])
 log_trans = np.log(hmmTest['transmat'])[:-1, :-1]
 
 
 
-proto2.baum_welch(lmfcc,hmmTest['means'], hmmTest['covars'], log_startprob, log_trans, example_data)
+proto2.baum_welch(lmfcc_example, hmmTest['means'], hmmTest['covars'], log_startprob, log_trans, example_data)
 
-loglikelihood = tools2.log_multivariate_normal_density_diag(lmfcc, hmmTest['means'], hmmTest['covars'])
+loglikelihood = tools2.log_multivariate_normal_density_diag(lmfcc_example, hmmTest['means'], hmmTest['covars'])
 
 #Forward alogithm
 log_alpha = proto2.forward(loglikelihood, log_startprob ,log_trans)
@@ -48,7 +49,7 @@ diffb = log_beta - example_data['logbeta']
 log_gamma = proto2.statePosteriors(example_data['logalpha'],example_data['logbeta'])
 diffg = log_gamma - example_data['loggamma']
 
-log_gamma = proto2.updateMeanAndVar(lmfcc,example_data['loggamma'])
+log_gamma = proto2.updateMeanAndVar(lmfcc_example, example_data['loggamma'])
 
 
 
@@ -61,7 +62,7 @@ ax = plt.subplot(1, 1, 1)
 ax.set_title('lmfcc')
 ax.set_yticklabels([])
 ax.set_xticklabels([])
-plt.pcolormesh(np.transpose(lmfcc))
+plt.pcolormesh(np.transpose(lmfcc_example))
 plt.show()
 
 plt.figure(figsize=(20,10))
@@ -69,7 +70,7 @@ ax = plt.subplot(1, 1, 1)
 plt.title('lmfcc')
 ax.set_yticklabels([])
 ax.set_xticklabels([])
-plt.pcolormesh(np.transpose(lmfcc))
+plt.pcolormesh(np.transpose(lmfcc_example))
 plt.show()
 
 plt.figure(figsize=(20,10))
