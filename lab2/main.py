@@ -53,7 +53,8 @@ diffg = log_gamma - example_data['loggamma']
 print('Execution done in '+str(round((timer()-startTime),2))+" seconds")
 
 #Plot graphs
-plt = plotting.plotEachStep(lmfcc_example,loglikelihood,log_alpha,log_beta,log_gamma)
+#plt = plotting.plotEachStep(lmfcc_example,loglikelihood,log_alpha,log_beta,log_gamma)
+#plt.show()
+
+plotting.plotBestPath(log_alpha,viter[1])
 plt.show()
-
-
