@@ -50,4 +50,12 @@ def plotEachStep(lmfcc_example,loglikelihood,log_alpha,log_beta,log_gamma):
     plt.pcolormesh(np.transpose(log_gamma))
     return plt
 
-
+def plotBestPath(log_alpha,bestPath):
+    ax = plt.subplot(1, 1, 1)
+    ax.set_yticklabels('')
+    ax.set_yticks([0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5], minor=True)
+    ax.set_yticklabels(['1', '2', '3', '4', '5', '6', '7', '8', '9'], minor=True)
+    ax.set_title('Viterbi best path')
+    plt.pcolormesh(np.transpose(log_alpha))
+    plt.plot(bestPath + 0.5, color='C3')
+    return plt
