@@ -67,6 +67,7 @@ print('Execution done in '+str(round((timer()-startTime),2))+" seconds")
 #plt.show()
 
 #Plot 4.1
+''' 
 hmmTest = proto2.concatHMMs(phoneHMMs,modellist['6'])
 Prob6Ma = tools2.log_multivariate_normal_density_diag(lmfcc6Ma, hmmTest['means'], hmmTest['covars'])
 Prob6Mb = tools2.log_multivariate_normal_density_diag(lmfcc6Mb, hmmTest['means'], hmmTest['covars'])
@@ -106,5 +107,38 @@ for tick in ax.yaxis.get_major_ticks():
 ax.set_xticklabels([])
 plt.pcolormesh(np.transpose(Prob6Fb))
 
+#plt.show()
+'''
 
+#Get best scores for all utterances
+viterbiTable = np.zeros((44,11))
+#modellistKeys = list(modellist.keys())
+modellistKeys = ['z','o', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+ylabels = []
+for i in range(0,44):
+    lmfcc = data[i]['lmfcc']
+    normalize = len(data[0]['lmfcc'])
+    ylabels.append(data[i]['digit'] + data[i]['gender'] + data[i]['repetition'])
+    print(str(i))
+    for j in range(0,11):
+        hmm = proto2.concatHMMs(phoneHMMs, modellist[modellistKeys[j]])
+        loglikelihood = tools2.log_multivariate_normal_density_diag(lmfcc, hmm['means'], hmm['covars'])
+        log_startprob = np.log(hmm['startprob'])
+        log_trans = np.log(hmm['transmat'])[:-1, :-1]
+        viter = proto2.viterbi(loglikelihood, log_startprob ,log_trans)
+        viterbiTable[i,j] = viter[0]/normalize
+
+
+plt.figure(figsize=(10,10))
+ax = plt.subplot(1, 1, 1)
+plt.yticks(np.arange(0, 45, 1.0))
+ax.set_title('Viterbi Table')
+ax.set_yticklabels(ylabels)
+for tick in ax.yaxis.get_major_ticks():
+    tick.label.set_fontsize(6)
+plt.xticks(np.arange(0, 11, 1.0))
+ax.set_xticklabels(modellistKeys)
+plt.pcolormesh(viterbiTable)
 plt.show()
+
+print("Done")

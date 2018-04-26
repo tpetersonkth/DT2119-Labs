@@ -210,7 +210,6 @@ def updateMeanAndVar(X, log_gamma, varianceFloor=5.0):
 
     return means, covars
 
-
 def baum_welch(lmfcc, init_means, init_covars,  log_startprob, log_trans,example_data, max_iter=20, stop_threshold=1.0):
     means = init_means
     covars = init_covars
