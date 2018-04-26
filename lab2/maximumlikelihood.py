@@ -15,8 +15,18 @@ for digit in prondict.keys():
     modellist[digit] = ['sil'] + prondict[digit] + ['sil']
 
 loglik = np.zeros((len(data),len(modellist)))
+ground_truth = []
+classification = []
 for i, utterance in enumerate(data):
     print('utterance', i)
+
+    # Getting true result
+    digit = utterance['digit']
+    if digit == 'o': truth = 0
+    elif digit == 'z': truth = 1
+    else: truth = int(digit) + 1
+    ground_truth.append(truth)
+
     for j, modelkey in enumerate(modellist.keys()):
         lmfcc = utterance['lmfcc']
 
@@ -30,6 +40,12 @@ for i, utterance in enumerate(data):
         #Forward alogithm
         log_alpha = proto2.forward(loglikelihood, log_startprob ,log_trans)
         loglik[i,j] = tools2.logsumexp(log_alpha[-1])
+
+    classified = np.argmax(loglik[i,:])
+    classification.append(classified)
+
+print(classification)
+print(ground_truth)
 
 np.save('saved_data', loglik)
 
