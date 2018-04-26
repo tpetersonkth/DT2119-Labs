@@ -113,12 +113,14 @@ plt.pcolormesh(np.transpose(Prob6Fb))
 #Get best scores for all utterances
 viterbiTable = np.zeros((44,11))
 #modellistKeys = list(modellist.keys())
-modellistKeys = ['z','o', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-ylabels = []
+modellistKeys = ['o','z', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+xlabels = []
+pred = []
+ground_truth = []
 for i in range(0,44):
     lmfcc = data[i]['lmfcc']
-    normalize = len(data[0]['lmfcc'])
-    ylabels.append(data[i]['digit'] + data[i]['gender'] + data[i]['repetition'])
+    #normalize = len(data[0]['lmfcc'])
+    xlabels.append(data[i]['digit'] + data[i]['gender'] + data[i]['repetition'])
     print(str(i))
     for j in range(0,11):
         hmm = proto2.concatHMMs(phoneHMMs, modellist[modellistKeys[j]])
@@ -126,19 +128,35 @@ for i in range(0,44):
         log_startprob = np.log(hmm['startprob'])
         log_trans = np.log(hmm['transmat'])[:-1, :-1]
         viter = proto2.viterbi(loglikelihood, log_startprob ,log_trans)
-        viterbiTable[i,j] = viter[0]/normalize
+        viterbiTable[i,j] = viter[0]
+
+    pred.append(np.argmax(viterbiTable[i,:]))
+    # Getting true result
+    digit = data[i]['digit']
+    if digit == 'o':
+        truth = 0
+    elif digit == 'z':
+        truth = 1
+    else:
+        truth = int(digit) + 1
+    ground_truth.append(truth)
 
 
 plt.figure(figsize=(10,10))
 ax = plt.subplot(1, 1, 1)
-plt.yticks(np.arange(0, 45, 1.0))
+plt.xticks(np.arange(0, 45, 1.0))
 ax.set_title('Viterbi Table')
-ax.set_yticklabels(ylabels)
-for tick in ax.yaxis.get_major_ticks():
+ax.set_xticklabels(xlabels,rotation=90)
+for tick in ax.xaxis.get_major_ticks():
     tick.label.set_fontsize(6)
-plt.xticks(np.arange(0, 11, 1.0))
-ax.set_xticklabels(modellistKeys)
-plt.pcolormesh(viterbiTable)
+plt.yticks(np.arange(0, 11, 1.0))
+ax.set_yticklabels(modellistKeys)
+plt.pcolormesh(np.transpose(viterbiTable))
+
+plt.plot(ground_truth, label='Truth', linewidth=5, c='black')
+plt.plot(pred, label='predicted')
+plt.legend()
+
 plt.show()
 
 print("Done")
