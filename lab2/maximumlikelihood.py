@@ -46,7 +46,8 @@ for i, utterance in enumerate(data):
 
 print(classification)
 print(ground_truth)
-
+np.save('classification_label', ground_truth)
+np.save('classification_result', classification)
 np.save('saved_data', loglik)
 
 print('hello')

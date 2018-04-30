@@ -216,24 +216,23 @@ def updateMeanAndVar(X, log_gamma, varianceFloor=5.0):
 
     return means, covars
 
-def baum_welch(lmfcc, init_means, init_covars,  log_startprob, log_trans,example_data, max_iter=200, stop_threshold=1.0):
+
+def baum_welch(lmfcc, init_means, init_covars,  log_startprob, log_trans, example_data, max_iter=20, stop_threshold=1.0):
     means = init_means
     covars = init_covars
+    log_alpha_lik = -10000000000000
     for i in range(max_iter):
         loglikelihood = log_multivariate_normal_density_diag(lmfcc, means, covars)
-        print('loglikelihood', np.mean(loglikelihood))
         log_alpha = forward(loglikelihood, log_startprob, log_trans)
         log_beta = backward(loglikelihood, log_startprob, log_trans)
         log_gamma = statePosteriors(log_alpha, log_beta)
-        means_, covars_ = updateMeanAndVar(lmfcc, log_gamma)
-        diff = means-means_
+        means, covars = updateMeanAndVar(lmfcc, log_gamma)
 
-        # print('old means', np.mean(means))
-        # print('new means',np.mean(means_))
-        # print('old covars', np.mean(covars))
-        # print('new covars', np.mean(covars_))
-        means = means_
-        #covars = covars_
+        _new_lik = logsumexp(log_alpha[-1])
+        if (_new_lik - log_alpha_lik) < stop_threshold:
+            break
+        log_alpha_lik = _new_lik
+        print('iter ',i,' likelihood', np.mean(log_alpha_lik))
 
     print("Baum Welch Done!")
 
