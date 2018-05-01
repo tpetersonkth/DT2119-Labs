@@ -29,6 +29,50 @@ def words2phones(wordList, pronDict, addSilence=True, addShortPause=False):
 
     return phones
 
+def concatHMMs(hmmmodels, namelist):
+    """ Concatenates HMM models in a left to right manner
+
+    Args:
+       hmmmodels: list of dictionaries with the following keys:
+           name: phonetic or word symbol corresponding to the model
+           startprob: M+1 array with priori probability of state
+           transmat: (M+1)x(M+1) transition matrix
+           means: MxD array of mean vectors
+           covars: MxD array of variances
+       namelist: list of model names that we want to concatenate
+
+    D is the dimension of the feature vectors
+    M is the number of states in each HMM model (could be different for each)
+
+    Output
+       combinedhmm: dictionary with the same keys as the input but
+                    combined models
+
+    Example:
+       wordHMMs['o'] = concatHMMs(phoneHMMs, ['sil', 'ow', 'sil'])
+    """
+    wordHmm = copy.deepcopy(hmmmodels[namelist[0]])
+    states = namelist.count('sp') + (len(namelist) - namelist.count('sp'))*3
+    d = 4*len(namelist)-(len(namelist)-1)
+    wordHmm['transmat'] = np.zeros((states+1,states+1))
+    wordHmm['means'] = np.zeros((states,13))
+    wordHmm['covars'] = np.zeros((states, 13))
+    wordHmm['startprob'] = np.zeros((1, states))
+    wordHmm['startprob'][0,0] = 1
+    c = 0
+    for i in range(0,len(namelist)):
+        if (namelist[i] == 'sp'):
+            wordHmm['transmat'][c:c + 2, c:c + 2] = hmmmodels[namelist[i]]['transmat']
+            wordHmm['means'][c:c + 1, :] = hmmmodels[namelist[i]]['means']
+            wordHmm['covars'][c:c + 1, :] = hmmmodels[namelist[i]]['covars']
+            c += 1
+        else:
+            wordHmm['transmat'][c:c+4, c:c+4] = hmmmodels[namelist[i]]['transmat']
+            wordHmm['means'][c:c+3,:] = hmmmodels[namelist[i]]['means']
+            wordHmm['covars'][c:c + 3, :] = hmmmodels[namelist[i]]['covars']
+            c += 3
+    wordHmm['transmat'][-1, -1] = 1
+    return wordHmm
 
 def forcedAlignment(lmfcc, phoneHMMs, phoneTrans):
     """ forcedAlignmen: aligns a phonetic transcription at the state level
