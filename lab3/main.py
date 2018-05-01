@@ -8,15 +8,16 @@ from lab1.proto import mfcc
 from lab2.prondict import prondict
 #Get stateList
 '''
-phoneHMMs = np.load('lab2_models.npz')['phoneHMMs'].item()
-phones = sorted(phoneHMMs.keys())
-nstates = {phone: phoneHMMs[phone]['means'].shape[0] for phone in phones}
-stateList = [ph + '_' + str(id) for ph in phones for id in range(nstates[ph])]
+
 
 #with open('stateList.pkl', 'wb') as f:
 #    pickle.dump(stateList, f)
 '''
 
+phoneHMMs = np.load('lab3/lab2_models.npz')['phoneHMMs'].item()
+phones = sorted(phoneHMMs.keys())
+nstates = {phone: phoneHMMs[phone]['means'].shape[0] for phone in phones}
+stateList = [ph + '_' + str(id) for ph in phones for id in range(nstates[ph])]
 with open('lab3/stateList.pkl', 'rb') as f:
     stateList = pickle.load(f)
 
@@ -28,8 +29,10 @@ lmfcc = mfcc(samples)
 
 wordTrans = list(path2info(fname)[2])
 
-test = words2phones(wordTrans,prondict, addShortPause=True)
-print(test)
+phoneTrans = words2phones(wordTrans,prondict, addShortPause=True)
+
+stateTrans = [phone + '_' + str(stateid) for phone in phoneTrans
+                  for stateid in range(nstates[phone])]
 
 
 print("Done")
