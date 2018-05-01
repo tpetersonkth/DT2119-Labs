@@ -1,3 +1,5 @@
 .idea/
 __pycache__/
 lab3/asset/
+lab3/Dataset/*
+
