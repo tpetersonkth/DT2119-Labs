@@ -1,4 +1,4 @@
-import lab3_proto
+import lab3.lab3_proto
 import numpy as np
 import pickle
 
