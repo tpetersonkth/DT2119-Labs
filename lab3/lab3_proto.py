@@ -94,7 +94,7 @@ def forcedAlignment(lmfcc, phoneHMMs, phoneTrans):
     aligned = phoneTrans[states]
     return aligned
 
-
+# compile with SSE4.1, SSE4.2, AVX, AVX2, FMA
 
 
 def hmmLoop(hmmmodels, namelist=None):
