@@ -37,5 +37,6 @@ concatenatedNew = proto.concatHMMs(phoneHMMs,phoneTrans)
 stateTrans = [phone + '_' + str(stateid) for phone in phoneTrans
                   for stateid in range(nstates[phone])]
 
+frames2trans(viterbiStateTrans, outfilename='z43a.lab')
 
 print("Done")
