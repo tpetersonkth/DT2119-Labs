@@ -35,4 +35,6 @@ stateTrans = [phone + '_' + str(stateid) for phone in phoneTrans
                   for stateid in range(nstates[phone])]
 stateTrans_idx = list(map(stateList.index,stateTrans))
 aligned = forcedAlignment(lmfcc, hmms, stateTrans)
+
+frames2trans(aligned, outfilename='z43a.lab')
 print("Done")
