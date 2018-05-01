@@ -1,7 +1,7 @@
 import numpy as np
 import os
 #from pysoundfile import sndio
-import soundfile as sndio
+from pysndfile import sndio
 
 def path2info(path):
     """
