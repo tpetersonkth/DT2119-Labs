@@ -1,5 +1,5 @@
 import numpy as np
-from lab3_tools import *
+from lab3.lab3_tools import *
 
 def words2phones(wordList, pronDict, addSilence=True, addShortPause=False):
     """ word2phones: converts word level to phone level transcription adding silence
