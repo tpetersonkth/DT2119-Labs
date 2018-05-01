@@ -153,9 +153,8 @@ def viterbi(log_emlik, log_startprob, log_transmat):
 
     #Propagate best paths foward
     for o in range(1, observations):
-        for j in range(0, states):
-            V[o,j] = np.max(V[o - 1, :] + log_transmat[:, j]) + log_emlik[o, j]
-            B[o,j] = np.argmax(V[o - 1, :] + log_transmat[:, j])
+        V[o,:] = np.max(V[o - 1, :, None] + log_transmat[:, :], axis=0) + log_emlik[o, :]
+        B[o,:] = np.argmax(V[o - 1, :, None] + log_transmat[:, :], axis=0)
 
     lenOfShortest = np.max(V[-1, :])
 
