@@ -28,7 +28,8 @@ lmfcc = mfcc(samples)
 
 wordTrans = list(path2info(fname)[2])
 
-test = words2phones(wordTrans,prondict)
+test = words2phones(wordTrans,prondict, addShortPause=True)
+print(test)
 
 
 print("Done")
