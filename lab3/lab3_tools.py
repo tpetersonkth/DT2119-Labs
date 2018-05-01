@@ -1,6 +1,7 @@
 import numpy as np
 import os
-from pysndfile import sndio
+#from pysoundfile import sndio
+import soundfile as sndio
 
 def path2info(path):
     """
@@ -34,6 +35,7 @@ def loadAudio(filename):
     samplingrate = sndobj[1]
     samples = np.array(sndobj[0])*np.iinfo(np.int16).max
     return samples, samplingrate
+
 
 def frames2trans(sequence, outfilename=None, timestep=0.01):
     """
