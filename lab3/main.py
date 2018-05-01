@@ -32,16 +32,6 @@ wordTrans = list(path2info(fname)[2])
 
 phoneTrans = proto.words2phones(wordTrans,prondict, addShortPause=True)
 
-
-modellist = {}
-for digit in prondict.keys():
-    modellist[digit] = ['sil'] + prondict[digit] + ['sil']
-
-concatenatedOld = proto2.concatHMMs(phoneHMMs,modellist['o'])
-concatenated = proto.concatHMMs(phoneHMMs,modellist['o'])
-
-diff = concatenated['transmat'] - concatenatedOld['transmat']
-
 concatenatedNew = proto.concatHMMs(phoneHMMs,phoneTrans)
 
 stateTrans = [phone + '_' + str(stateid) for phone in phoneTrans
