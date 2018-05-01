@@ -3,6 +3,7 @@ import os
 #from pysoundfile import sndio
 from pysndfile import sndio
 
+
 def path2info(path):
     """
     path2info: parses paths in the TIDIGIT format and extracts information

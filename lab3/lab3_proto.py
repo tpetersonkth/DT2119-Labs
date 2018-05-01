@@ -1,5 +1,6 @@
 import numpy as np
 from lab3.lab3_tools import *
+from lab2.prondict import prondict
 
 def words2phones(wordList, pronDict, addSilence=True, addShortPause=False):
     """ word2phones: converts word level to phone level transcription adding silence
@@ -28,6 +29,10 @@ def forcedAlignment(lmfcc, phoneHMMs, phoneTrans):
        list of strings in the form phoneme_index specifying, for each time step
        the state from phoneHMMs corresponding to the viterbi path.
     """
+
+
+
+
 
 def hmmLoop(hmmmodels, namelist=None):
     """ Combines HMM models in a loop
