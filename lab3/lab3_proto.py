@@ -1,6 +1,7 @@
 import numpy as np
 from lab3.lab3_tools import *
-from lab2.prondict import prondict
+
+from lab2.proto2 import *
 
 def words2phones(wordList, pronDict, addSilence=True, addShortPause=False):
     """ word2phones: converts word level to phone level transcription adding silence
@@ -13,6 +14,20 @@ def words2phones(wordList, pronDict, addSilence=True, addShortPause=False):
     Output:
        list of phone symbols
     """
+    phones = []
+    if addSilence:
+        phones = ['sil']
+
+
+    for word in wordList:
+        phones += pronDict[word]
+        if addShortPause:
+            phones += ['sp']
+
+    if addSilence:
+        phones += ['sil']
+
+    return phones
 
 
 def forcedAlignment(lmfcc, phoneHMMs, phoneTrans):
@@ -29,7 +44,11 @@ def forcedAlignment(lmfcc, phoneHMMs, phoneTrans):
        list of strings in the form phoneme_index specifying, for each time step
        the state from phoneHMMs corresponding to the viterbi path.
     """
-
+    log_emlik = log_multivariate_normal_density_diag(lmfcc, phoneHMMs['means'], phoneHMMs['covars'])
+    states = viterbi(log_emlik,phoneHMMs['startprob'],phoneHMMs['transmat'])
+    #TODO max pooling?
+    aligned = phoneTrans[states]
+    return aligned
 
 
 
