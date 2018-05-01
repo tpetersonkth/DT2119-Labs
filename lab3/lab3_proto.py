@@ -89,9 +89,9 @@ def forcedAlignment(lmfcc, phoneHMMs, phoneTrans):
        the state from phoneHMMs corresponding to the viterbi path.
     """
     log_emlik = log_multivariate_normal_density_diag(lmfcc, phoneHMMs['means'], phoneHMMs['covars'])
-    states = viterbi(log_emlik,phoneHMMs['startprob'],phoneHMMs['transmat'])
-    #TODO max pooling?
-    aligned = phoneTrans[states]
+    transmat = phoneHMMs['transmat'][:-1, :-1]
+    states = viterbi(log_emlik,phoneHMMs['startprob'],transmat)[1]
+    aligned = [phoneTrans[s] for s in states]
     return aligned
 
 # compile with SSE4.1, SSE4.2, AVX, AVX2, FMA
