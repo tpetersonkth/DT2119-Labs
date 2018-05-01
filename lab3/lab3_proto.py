@@ -13,6 +13,7 @@ def words2phones(wordList, pronDict, addSilence=True, addShortPause=False):
        list of phone symbols
     """
 
+
 def forcedAlignment(lmfcc, phoneHMMs, phoneTrans):
     """ forcedAlignmen: aligns a phonetic transcription at the state level
 
