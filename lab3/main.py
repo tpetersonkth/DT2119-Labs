@@ -3,7 +3,7 @@ import numpy as np
 import pickle
 
 from lab3.lab3_tools import *
-import lab3.lab3_proto as proto
+from lab3.lab3_proto import *
 import lab2.proto2 as proto2
 from lab1.proto import mfcc
 from lab2.prondict import prondict
@@ -29,23 +29,10 @@ samples, samplingrate = loadAudio(fname)
 lmfcc = mfcc(samples)
 
 wordTrans = list(path2info(fname)[2])
-
-phoneTrans = proto.words2phones(wordTrans,prondict, addShortPause=True)
-
-
-modellist = {}
-for digit in prondict.keys():
-    modellist[digit] = ['sil'] + prondict[digit] + ['sil']
-
-concatenatedOld = proto2.concatHMMs(phoneHMMs,modellist['o'])
-concatenated = proto.concatHMMs(phoneHMMs,modellist['o'])
-
-diff = concatenated['transmat'] - concatenatedOld['transmat']
-
-concatenatedNew = proto.concatHMMs(phoneHMMs,phoneTrans)
-
+phoneTrans = words2phones(wordTrans,prondict, addShortPause=True)
+hmms = concatHMMs(phoneHMMs,phoneTrans)
 stateTrans = [phone + '_' + str(stateid) for phone in phoneTrans
                   for stateid in range(nstates[phone])]
 
-
+aligned = forcedAlignment(lmfcc, hmms, stateTrans)
 print("Done")
