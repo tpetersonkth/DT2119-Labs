@@ -3,3 +3,4 @@ __pycache__/
 lab3/asset/
 lab3/Dataset/*
 lab3/lab3_tools.py
+*data.npz

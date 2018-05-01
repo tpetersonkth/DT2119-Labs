@@ -38,7 +38,7 @@ def mfcc(samples, winlen = 400, winshift = 200, preempcoeff=0.97, nfft=512, ncep
     liftered = lifter(ceps, liftercoeff)
 
     # plotting
-    plot_sub(liftered, 'Liftered', 8)
+    #plot_sub(liftered, 'Liftered', 8)
 
     if liftering:
         return liftered
@@ -200,7 +200,7 @@ def cepstrum(input, nceps):
     out = dct(input, norm='ortho')
     out = out[:, 0:13]
 
-    plot_sub(out, 'Capstrum', 7)
+    #plot_sub(out, 'Capstrum', 7)
 
 
     return out
