@@ -15,7 +15,6 @@ nstates = {phone: phoneHMMs[phone]['means'].shape[0] for phone in phones}
 stateList = [ph + '_' + str(id) for ph in phones for id in range(nstates[ph])]
 
 def gen(fname):
-    print(fname)
     samples, samplingrate = loadAudio(fname)
     lmfcc = mfcc(samples)
 
@@ -45,7 +44,7 @@ def threading(q:Queue, ret_q:Queue):
         data.append({'filename': fname, 'lmfcc': lmfcc, 'mspec': 'mspec', 'targets': aligned})
 
     np.savez('%s_data.npz' % SET, data=data)
-    print('Done I think?')
+    print('Done!!')
 
 def work(q:Queue, ret_q:Queue):
     while not q.empty():
