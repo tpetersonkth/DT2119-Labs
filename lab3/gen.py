@@ -6,7 +6,7 @@ from lab2.prondict import prondict
 import os
 from queue import Queue
 from threading import Thread
-SET = 'train' # test/train
+SET = 'test' # test/train
 THREADS = 20
 
 phoneHMMs = np.load('lab3/lab2_models.npz')['phoneHMMs'].item()
@@ -15,6 +15,7 @@ nstates = {phone: phoneHMMs[phone]['means'].shape[0] for phone in phones}
 stateList = [ph + '_' + str(id) for ph in phones for id in range(nstates[ph])]
 
 def gen(fname):
+    print(fname)
     samples, samplingrate = loadAudio(fname)
     lmfcc = mfcc(samples)
 
@@ -58,7 +59,8 @@ def work(q:Queue, ret_q:Queue):
 q = Queue()
 ret_q = Queue()
 i = 0
-for root, dirs, files in os.walk('lab3/asset/tidigits/disc_4.1.1/tidigits/%s' % SET):
+disc = 'disc_4.1.1' if SET == 'train' else 'disc_4.2.1'
+for root, dirs, files in os.walk('lab3/asset/tidigits/%s/tidigits/%s' % (disc, SET)):
     for file in files:
         if file.endswith('.wav'):
             fname = os.path.join(root, file)
