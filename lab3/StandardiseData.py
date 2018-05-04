@@ -19,7 +19,7 @@ def standardize_per_utterance(fname):
 def one_hot(target):
     return to_categorical(target,61).transpose()  #61 = the amount of possible states
 
-stand = standardize_per_utterance("G:/train_data.npz")
+#stand = standardize_per_utterance("G:/train_data.npz")
 
 
 def lmfcc_stack(matrix:np.ndarray, n):
