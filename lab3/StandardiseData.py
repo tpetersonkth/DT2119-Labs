@@ -1,5 +1,7 @@
 import numpy as np
 from sklearn.preprocessing import StandardScaler
+from keras.utils import to_categorical
+
 
 def standardize_per_utterance(fname):
     a = np.load(fname)['data']
@@ -10,12 +12,12 @@ def standardize_per_utterance(fname):
         newDatapoint = {}
         fittedScalar = scaler.fit(a[i]['lmfcc'])
         newDatapoint['lmfcc'] = fittedScalar.transform(a[i]['lmfcc'])
-        newDatapoint['targets'] = a[i]['targets'].copy()
+        newDatapoint['targets'] = one_hot(a[i]['targets'])
         standByUtterance.append(newDatapoint)
     return standByUtterance
 
-def one_hot(target, maxNum):
-    pass
+def one_hot(target):
+    return to_categorical(target,61).transpose()  #61 = the amount of possible states
 
 stand = standardize_per_utterance("G:/train_data.npz")
 
