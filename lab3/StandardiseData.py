@@ -3,16 +3,15 @@ from sklearn.preprocessing import StandardScaler
 from keras.utils import to_categorical
 
 
-def standardize_per_utterance(fname):
-    a = np.load(fname)['data']
+def standardize_per_utterance(data):
     #Fitting each utterance
     scaler = StandardScaler()
     standByUtterance = []
-    for i in range(0,len(a)):
+    for i in range(0,len(data)):
         newDatapoint = {}
-        fittedScalar = scaler.fit(a[i]['lmfcc'])
-        newDatapoint['lmfcc'] = fittedScalar.transform(a[i]['lmfcc'])
-        newDatapoint['targets'] = one_hot(a[i]['targets'])
+        fittedScalar = scaler.fit(data[i]['lmfcc'])
+        newDatapoint['lmfcc'] = fittedScalar.transform(data[i]['lmfcc'])
+        newDatapoint['targets'] = one_hot(data[i]['targets'])
         standByUtterance.append(newDatapoint)
     return standByUtterance
 
@@ -51,7 +50,35 @@ def standardize_per_training_set(trainingData,validationData,testData):
 
     return trainingSet,validationSet ,testSet
 
+def add_id_and_gender(data):
+    for i in range(0,len(data)):
+        splitted = data[i]['filename'].split("/")
+        data[i]['gender'] = splitted[-3]
+        data[i]['id'] = splitted[-2]
+    return data
 
+
+def standardize_per_speaker(data):
+    data = add_id_and_gender(data)
+    dataBySpeaker = {}
+    for i in range(0,len(data)):
+        dataBySpeaker[data[i]['id']] = []
+
+    for i in range(0, len(data)):
+        dataBySpeaker[data[i]['id']].append(data[i])
+
+    data = []
+    speakers = dataBySpeaker.keys()
+    for speaker in speakers:
+        fitData = [d['lmfcc'] for d in dataBySpeaker[speaker]]
+        fitData = np.vstack(fitData)
+        scaler = StandardScaler()
+        fittedScalar = scaler.fit(fitData)
+        for i in range(0,len(dataBySpeaker[speaker])):
+            dataBySpeaker[speaker][i]['lmfcc'] = fittedScalar.transform(dataBySpeaker[speaker][i]['lmfcc'])
+            data.append(dataBySpeaker[speaker][i])
+
+    return data
 
 def lmfcc_stack(matrix:np.ndarray, n):
     stacked = []
@@ -78,5 +105,6 @@ def lmfcc_stack(matrix:np.ndarray, n):
 
 if __name__ == "__main__":
     trainingData = np.load("G:/train_data.npz")['data']
-    data = standardize_per_training_set(trainingData)
+    data = standardize_per_speaker(trainingData)
+    #data = standardize_per_training_set(trainingData)
     print("Done")
