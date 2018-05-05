@@ -19,8 +19,30 @@ def standardize_per_utterance(fname):
 def one_hot(target):
     return to_categorical(target,61).transpose()  #61 = the amount of possible states
 
-#stand = standardize_per_utterance("G:/train_data.npz")
+def standardize_per_training_set(trainingFname,testFname):
+    trainingData = np.load(trainingFname)['data']
+    testData = np.load(testFname)['data']
 
+    fitData = [d['lmfcc'] for d in trainingData]
+    fitData = np.vstack(fitData)
+    scaler = StandardScaler()
+    fittedScalar = scaler.fit(fitData)
+
+    standByTrainingSet = []
+    for i in range(0,len(trainingData)):
+        newDatapoint = {}
+        newDatapoint['lmfcc'] = fittedScalar.transform(trainingData[i]['lmfcc'])
+        newDatapoint['targets'] = one_hot(trainingData[i]['targets'])
+        standByTrainingSet.append(newDatapoint)
+
+    standByTestSet = []
+    for i in range(0, len(testData)):
+        newDatapoint = {}
+        newDatapoint['lmfcc'] = fittedScalar.transform(testData[i]['lmfcc'])
+        newDatapoint['targets'] = one_hot(testData[i]['targets'])
+        standByTestSet.append(newDatapoint)
+
+    return standByTrainingSet, standByTestSet
 
 def lmfcc_stack(matrix:np.ndarray, n):
     stacked = []
@@ -43,7 +65,8 @@ def lmfcc_stack(matrix:np.ndarray, n):
         stacked.append(new_mat)
     ndstacked = np.hstack(stacked)
     return ndstacked
-print("Done")
 
 
-
+if __name__ == "__main__":
+    data = standardize_per_training_set("G:/train_data.npz","G:/test_data.npz")
+    print("Done")
