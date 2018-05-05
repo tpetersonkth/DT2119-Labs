@@ -19,30 +19,39 @@ def standardize_per_utterance(fname):
 def one_hot(target):
     return to_categorical(target,61).transpose()  #61 = the amount of possible states
 
-def standardize_per_training_set(trainingFname,testFname):
-    trainingData = np.load(trainingFname)['data']
-    testData = np.load(testFname)['data']
+def standardize_per_training_set(trainingData,validationData,testData):
+    #trainingData = np.load(trainingFname)['data']
+    #testData = np.load(testFname)['data']
 
     fitData = [d['lmfcc'] for d in trainingData]
     fitData = np.vstack(fitData)
     scaler = StandardScaler()
     fittedScalar = scaler.fit(fitData)
 
-    standByTrainingSet = []
+    trainingSet = []
     for i in range(0,len(trainingData)):
         newDatapoint = {}
         newDatapoint['lmfcc'] = fittedScalar.transform(trainingData[i]['lmfcc'])
         newDatapoint['targets'] = one_hot(trainingData[i]['targets'])
-        standByTrainingSet.append(newDatapoint)
+        trainingSet.append(newDatapoint)
 
-    standByTestSet = []
+    validationSet = []
+    for i in range(0, len(validationData)):
+        newDatapoint = {}
+        newDatapoint['lmfcc'] = fittedScalar.transform(validationData[i]['lmfcc'])
+        newDatapoint['targets'] = one_hot(validationData[i]['targets'])
+        validationSet.append(newDatapoint)
+
+    testSet = []
     for i in range(0, len(testData)):
         newDatapoint = {}
         newDatapoint['lmfcc'] = fittedScalar.transform(testData[i]['lmfcc'])
         newDatapoint['targets'] = one_hot(testData[i]['targets'])
-        standByTestSet.append(newDatapoint)
+        testSet.append(newDatapoint)
 
-    return standByTrainingSet, standByTestSet
+    return trainingSet,validationSet ,testSet
+
+
 
 def lmfcc_stack(matrix:np.ndarray, n):
     stacked = []
@@ -68,5 +77,6 @@ def lmfcc_stack(matrix:np.ndarray, n):
 
 
 if __name__ == "__main__":
-    data = standardize_per_training_set("G:/train_data.npz","G:/test_data.npz")
+    trainingData = np.load("G:/train_data.npz")['data']
+    data = standardize_per_training_set(trainingData)
     print("Done")
