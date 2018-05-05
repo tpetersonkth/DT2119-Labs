@@ -57,15 +57,20 @@ def add_id_and_gender(data):
         data[i]['id'] = splitted[-2]
     return data
 
-
-def standardize_per_speaker(data):
-    data = add_id_and_gender(data)
+def get_data_by_speaker(data):
     dataBySpeaker = {}
-    for i in range(0,len(data)):
+    for i in range(0, len(data)):
         dataBySpeaker[data[i]['id']] = []
 
     for i in range(0, len(data)):
         dataBySpeaker[data[i]['id']].append(data[i])
+
+    return dataBySpeaker
+
+
+def standardize_per_speaker(data):
+    data = add_id_and_gender(data)
+    dataBySpeaker = get_data_by_speaker(data)
 
     data = []
     speakers = dataBySpeaker.keys()
@@ -79,6 +84,36 @@ def standardize_per_speaker(data):
             data.append(dataBySpeaker[speaker][i])
 
     return data
+
+def get_training_and_validation_sets(trainingData):
+    men = []
+    women = []
+    a = len(trainingData)
+    trainingData = add_id_and_gender(trainingData)
+    trainingData = get_data_by_speaker(trainingData)
+    keys = trainingData.keys()
+
+    for speaker in keys:
+        if trainingData[speaker][0]['gender'] == 'man':
+            men.append(trainingData[speaker])
+        else:
+            women.append(trainingData[speaker])
+
+    meni = int(0.1*len(men))
+    womeni = int(0.1*len(women))
+    validation = men[:meni] + women[:womeni]
+    training = men[meni:] + women[womeni:]
+
+    validationSet = []
+    for i in validation:
+        validationSet = validationSet + i
+
+    trainingSet = []
+    for i in training:
+        trainingSet = trainingSet + i
+
+    print("SPlit done")
+    return trainingSet, validationSet
 
 def lmfcc_stack(matrix:np.ndarray, n):
     stacked = []
@@ -105,6 +140,7 @@ def lmfcc_stack(matrix:np.ndarray, n):
 
 if __name__ == "__main__":
     trainingData = np.load("G:/train_data.npz")['data']
-    data = standardize_per_speaker(trainingData)
+    data = get_training_and_validation_sets(trainingData)
+    #data = standardize_per_speaker(trainingData)
     #data = standardize_per_training_set(trainingData)
     print("Done")
