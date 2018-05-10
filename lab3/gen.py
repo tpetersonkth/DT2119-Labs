@@ -6,7 +6,7 @@ from lab2.prondict import prondict
 import os
 from queue import Queue
 from threading import Thread
-SET = 'test' # test/train
+SET = 'train' # test/train
 THREADS = 20
 
 phoneHMMs = np.load('lab3/lab2_models.npz')['phoneHMMs'].item()
@@ -14,20 +14,7 @@ phones = sorted(phoneHMMs.keys())
 nstates = {phone: phoneHMMs[phone]['means'].shape[0] for phone in phones}
 stateList = [ph + '_' + str(id) for ph in phones for id in range(nstates[ph])]
 
-def gen(fname):
-    print(fname)
-    samples, samplingrate = loadAudio(fname)
-    lmfcc = mfcc(samples)
 
-    wordTrans = list(path2info(fname)[2])
-    phoneTrans = words2phones(wordTrans, prondict, addShortPause=True)
-    hmms = concatHMMs(phoneHMMs, phoneTrans)
-    stateTrans = [phone + '_' + str(stateid) for phone in phoneTrans
-                  for stateid in range(nstates[phone])]
-    stateTrans_idx = list(map(stateList.index, stateTrans))
-    aligned = forcedAlignment(lmfcc, hmms, stateTrans_idx)
-
-    return aligned, lmfcc
 threads = []
 def threading(q:Queue, ret_q:Queue):
     data = []
@@ -41,8 +28,8 @@ def threading(q:Queue, ret_q:Queue):
         t.join()
 
     while not ret_q.empty():
-        fname, aligned, lmfcc = ret_q.get()
-        data.append({'filename': fname, 'lmfcc': lmfcc, 'mspec': 'mspec', 'targets': aligned})
+        fname, aligned, lmfcc, mspec = ret_q.get()
+        data.append({'filename': fname, 'lmfcc': lmfcc, 'mspec': mspec, 'targets': aligned})
 
     np.savez('%s_data.npz' % SET, data=data)
     print('Done!!')
@@ -50,11 +37,24 @@ def threading(q:Queue, ret_q:Queue):
 def work(q:Queue, ret_q:Queue):
     while not q.empty():
         fname = q.get()
-        aligned, lmfcc = gen(fname)
-        ret_q.put((fname, aligned, lmfcc))
+        aligned, lmfcc, mspec = gen(fname)
+        ret_q.put((fname, aligned, lmfcc, mspec))
         q.task_done()
 
+def gen(fname):
+    print(fname)
+    samples, samplingrate = loadAudio(fname)
+    lmfcc, mspec = mfcc(samples, liftering=False)
 
+    wordTrans = list(path2info(fname)[2])
+    phoneTrans = words2phones(wordTrans, prondict, addShortPause=True)
+    hmms = concatHMMs(phoneHMMs, phoneTrans)
+    stateTrans = [phone + '_' + str(stateid) for phone in phoneTrans
+                  for stateid in range(nstates[phone])]
+    stateTrans_idx = list(map(stateList.index, stateTrans))
+    aligned = forcedAlignment(lmfcc, hmms, stateTrans_idx)
+
+    return aligned, lmfcc, mspec
 
 q = Queue()
 ret_q = Queue()
