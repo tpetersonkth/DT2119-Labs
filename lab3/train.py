@@ -58,5 +58,11 @@ history = model.fit(x, y, validation_data=(x_val, y_val), batch_size=BATCH_SIZE,
 
 fname = 'h%d_%s_%s_u%d_e%d.h5py' % (NUM_HIDDEN_LAYERS, OPTIMIZER, ACTIVATION,HIDDEN_U,EPOCH)
 model.save(fname)
+
+with open('results_file','a+') as file:
+    hyperparam = 'Hidden layers: {} \nOptimizer: {} \nActivation: {} \nHidden Units: {}\n Epoch'.format(NUM_HIDDEN_LAYERS,OPTIMIZER, ACTIVATION, HIDDEN_U, EPOCH)
+    final_loss = 'final loss:' + str(history.history['val_loss'][-1])
+    line = '============================='
+    file.writelines('\n'.join([hyperparam, final_loss, line]))
 print('I"m done!!')
 
