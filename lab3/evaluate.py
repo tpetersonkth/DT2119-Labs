@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from StandardiseData import standardize_per_utterance, lmfcc_stack, standardize_per_training_set, get_training_and_validation_sets
 from confusion_mat import plot_confusion_matrix, get_confusion_matrix
 import pickle
+import editdistance
 
 NUM_STACK = 5
 
@@ -25,6 +26,16 @@ def combinePhonemes(labels,stateList):
 
     return labels, phoneme_list
 
+def groupedList(data):
+    grouped = []
+    prev = -1
+    for item in data:
+        if item != prev:
+            grouped.append(item)
+        prev = item
+    return grouped
+
+
 statlist = pickle.load(open('stateList.pkl', 'rb'))
 p = np.load('predicted_test.npy')
 
@@ -44,6 +55,11 @@ label = y.argmax(axis=1)
 predicted, phoneme_list = combinePhonemes(predicted, statlist)
 label, _ = combinePhonemes(label, statlist)
 
+grouped_label = groupedList(label)
+grouped_predicted = groupedList(predicted)
+
+accuracy = editdistance.eval(grouped_label, grouped_predicted) / len(grouped_label)
+print('accuracy %0.2f%%' % accuracy)
 cm = get_confusion_matrix(predicted, label)
 # manually normalize sil_0 and sil_1
 # cm[39, 39] = 0
