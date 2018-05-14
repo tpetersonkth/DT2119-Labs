@@ -6,6 +6,25 @@ import pickle
 
 NUM_STACK = 5
 
+def combinePhonemes(labels,stateList):
+    #labels - one dimensional tensor where each element is an observation
+    spIndex = -1
+    phoneme_list = []
+    prev = ''
+    for i, state in enumerate(stateList):
+        if state == 'sp_0':
+            spIndex = i
+        c = state.split('_')[0]
+        if c != prev:
+            phoneme_list.append(c)
+        prev = c
+
+    labels[labels > spIndex] += 2
+    labels = np.floor(labels/3)
+    labels = labels.astype("int")
+
+    return labels, phoneme_list
+
 statlist = pickle.load(open('stateList.pkl', 'rb'))
 p = np.load('predicted_test.npy')
 
@@ -21,7 +40,9 @@ y = np.hstack(y).T
 
 predicted = p.argmax(axis=1)
 label = y.argmax(axis=1)
-z = predicted[predicted > 32] + 2
+# combine into phenemse
+predicted, phoneme_list = combinePhonemes(predicted, statlist)
+label, _ = combinePhonemes(label, statlist)
 
 cm = get_confusion_matrix(predicted, label)
 # manually normalize sil_0 and sil_1
@@ -30,7 +51,8 @@ cm = get_confusion_matrix(predicted, label)
 print('calculating accuracy')
 accuracy = 1 - np.count_nonzero(predicted - label) / predicted.shape[0]
 print(accuracy * 100, '%')
-plot_confusion_matrix(cm, statlist, title='Frame by frame state confusion mat',save=True)
+cm[13,13] = 0
+plot_confusion_matrix(cm, phoneme_list, title='Phoneme state confusion mat, no silence',save=True)
 
 
 # model = keras.models.load_model('h3_adagrad_relu_u256_e100.h5py')
