@@ -11,10 +11,7 @@ def get_confusion_matrix(p, Y):
 
     from sklearn.metrics import confusion_matrix
 
-    y_pred = np.argmax(p, axis=0) #self.predict(X)
-    y_true = np.argmax(Y, axis=0)
-
-    return confusion_matrix(y_true, y_pred)
+    return confusion_matrix(p, Y)
 
 def plot_confusion_matrix(cm,
                           target_names,
