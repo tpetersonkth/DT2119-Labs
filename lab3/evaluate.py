@@ -1,7 +1,4 @@
 import numpy as np
-import keras
-from keras.models import Sequential
-from keras.layers.core import Activation, Dense
 import matplotlib.pyplot as plt
 from StandardiseData import standardize_per_utterance, lmfcc_stack, standardize_per_training_set, get_training_and_validation_sets
 from confusion_mat import plot_confusion_matrix, get_confusion_matrix
@@ -24,11 +21,17 @@ y = np.hstack(y).T
 
 predicted = p.argmax(axis=1)
 label = y.argmax(axis=1)
+z = predicted[predicted > 32] + 2
+
 cm = get_confusion_matrix(predicted, label)
 # manually normalize sil_0 and sil_1
-cm[39, 39] = 0
-cm[40, 40] = 0
-plot_confusion_matrix(cm, statlist)
+# cm[39, 39] = 0
+# cm[40, 40] = 0
+print('calculating accuracy')
+accuracy = 1 - np.count_nonzero(predicted - label) / predicted.shape[0]
+print(accuracy * 100, '%')
+plot_confusion_matrix(cm, statlist, title='Frame by frame state confusion mat',save=True)
+
 
 # model = keras.models.load_model('h3_adagrad_relu_u256_e100.h5py')
 # print('predicting..')
