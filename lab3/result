@@ -1,0 +1,15 @@
+NUM_HIDDEN_LAYERS = 3 # number of hidden layers
+ACTIVATION = 'selu'
+OPTIMIZER = 'adam'
+HIDDEN_U = 256
+BATCH_SIZE = 256
+EPOCH = 100
+1373261/1373261 [==============================] - 27s 20us/step - loss: 0.6458 - val_loss: 1.1088
+
+
+NUM_HIDDEN_LAYERS = 4 # number of hidden layers
+ACTIVATION = 'relu'
+OPTIMIZER = 'adam'
+HIDDEN_U = 256
+BATCH_SIZE = 256
+EPOCH = 100

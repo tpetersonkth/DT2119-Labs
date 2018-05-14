@@ -1,0 +1,85 @@
+Hidden layers: 3 
+Optimizer: adam 
+Activation: relu 
+Hidden Units: 256
+ Epoch
+final loss:0.9283222673105159
+=============================Hidden layers: 3 
+Optimizer: adam 
+Activation: relu 
+Hidden Units: 256
+ Epoch
+final loss:1.088630880345817
+=============================Hidden layers: 3 
+Optimizer: adam 
+Activation: elu 
+Hidden Units: 256
+ Epoch
+final loss:1.1222531575331
+=============================Hidden layers: 3 
+Optimizer: adam 
+Activation: selu 
+Hidden Units: 256
+ Epoch
+final loss:1.0942006970835514
+=============================Hidden layers: 4 
+Optimizer: adam 
+Activation: relu 
+Hidden Units: 256
+ Epoch
+final loss:1.104535763405245
+=============================Hidden layers: 2 
+Optimizer: adam 
+Activation: relu 
+Hidden Units: 256
+ Epoch
+final loss:0.9700955554894386
+=============================Hidden layers: 1 
+Optimizer: adam 
+Activation: relu 
+Hidden Units: 256
+ Epoch
+final loss:0.875663015916933
+=============================Hidden layers: 5 
+Optimizer: adam 
+Activation: relu 
+Hidden Units: 256
+ Epoch
+final loss:1.1150354065520987
+=============================Hidden layers: 3 
+Optimizer: sgd 
+Activation: relu 
+Hidden Units: 256
+ Epoch
+final loss:0.8835008470373156
+=============================Hidden layers: 3 
+Optimizer: adagrad 
+Activation: relu 
+Hidden Units: 256
+ Epoch
+final loss:0.8747119213008042
+=============================Hidden layers: 3 
+Optimizer: adam 
+Activation: relu 
+Hidden Units: 128
+ Epoch
+final loss:0.8983109298685464
+=============================Hidden layers: 3 
+Optimizer: adam 
+Activation: relu 
+Hidden Units: 512
+ Epoch
+final loss:2.0611226747420828
+=============================Hidden layers: 3 
+Optimizer: adam 
+Activation: relu 
+Hidden Units: 256
+ Epoch
+final loss:0.9976674090539611
+=============================Hidden layers: 3 
+Optimizer: adam 
+Activation: relu 
+Hidden Units: 256
+ Epoch
+final loss:1.0317933693121681
+=============================
