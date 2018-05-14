@@ -3,5 +3,6 @@ __pycache__/
 lab3/asset/
 lab3/Dataset/*
 lab3/lab3_tools.py
+*.h5py
 *data.npz
 *.npy

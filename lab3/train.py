@@ -3,19 +3,26 @@ from keras.models import Sequential
 from keras.layers.core import Activation, Dense
 import matplotlib.pyplot as plt
 from StandardiseData import standardize_per_utterance, lmfcc_stack, get_training_and_validation_sets
+import sys
 
 NUM_STACK = 5
 INPUT_DIM = 13 * (NUM_STACK * 2 + 1)
 
 # Hyper params
 NUM_HIDDEN_LAYERS = 3 # number of hidden layers
-ACTIVATION = 'selu'
-OPTIMIZER = 'adam'
-HIDDEN_U = 10
-BATCH_SIZE = 256
-EPOCH = 1
+ACTIVATION = sys.argv[1]
+OPTIMIZER = sys.argv[2]
+HIDDEN_U = sys.argv[3]
+BATCH_SIZE = sys.argv[4]
+EPOCH = sys.argv[5]
 # with open('train_data.npz') as file:
 #     data = file['data']
+
+print("Activation function:"+str(sys.argv[1]))
+print("Optimizer:"+str(sys.argv[2]))
+print("Hidden_U:"+str(sys.argv[3]))
+print("Batch_size:"+str(sys.argv[4]))
+print("Epoch:"+str(sys.argv[5]))
 
 train, validation = get_training_and_validation_sets(np.load('train_data.npz')['data'])
 # Standarrdize dataset
